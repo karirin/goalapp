@@ -8,6 +8,12 @@
 import SwiftUI
 import Firebase
 
+struct Milestone {
+    var goal: String
+    var value: Int
+    var unit: String
+}
+
 struct FirstPage: View {
     @State private var goal: String = ""
 
@@ -66,7 +72,7 @@ struct SecondPage: View {
 struct ThirdPage: View {
     @Binding var goal: String
     @Binding var date: Date
-    @State private var milestones = [String]()
+    @State private var milestones: [Milestone] = [Milestone(goal: "", value: 0, unit: "")]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let ref = Database.database().reference()
     
@@ -88,17 +94,22 @@ struct ThirdPage: View {
     init(goal: Binding<String>, date: Binding<Date>) {
         _goal = goal
         _date = date
-        _milestones = State(initialValue: [""])
+        _milestones = State(initialValue: [Milestone(goal: "", value: 0, unit: "")])
     }
 
     var body: some View {
         VStack {
             ForEach(milestones.indices, id: \.self) { index in
-                TextField("中間目標", text: $milestones[index])
+                TextField("中間目標", text: $milestones[index].goal)
+                TextField("値", text: Binding<String>(
+                    get: { String(self.milestones[index].value) },
+                    set: { self.milestones[index].value = Int($0) ?? 0 }
+                ))
+                TextField("単位", text: $milestones[index].unit)
             }
 
             Button(action: {
-                self.milestones.append("")
+                self.milestones.append(Milestone(goal: "", value: 0, unit: ""))
             }, label: {
                 Image(systemName: "plus")
                     .foregroundColor(.white)
@@ -109,9 +120,6 @@ struct ThirdPage: View {
                 .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
 
             Button(action: {
-                print("目標: \(self.goal)")
-                print("達成日: \(self.date)")
-                print("中間目標: \(self.milestones)")
                 
                 // 新しいpost IDを生成
                 let postID = ref.child("posts").childByAutoId().key
@@ -120,11 +128,20 @@ struct ThirdPage: View {
                 formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                 let dateString = formatter.string(from: now)
                 
+                // Get current user id
+                guard let currentUserId = AuthManager.shared.user?.uid else {
+                    print("No current user found")
+                    return
+                }
+                
                 // 保存するデータの作成
-                let post = ["目標": self.goal,
-                            "達成日": self.date.description, // 日付を文字列に変換
-                            "中間目標": self.milestones,
-                            "作成日": dateString] as [String : Any]
+                let post = ["userId": currentUserId,
+                            "goal": self.goal,
+                            "achievement_date": self.date.description,
+                            "intermediate_goal": self.milestones.map { ["goal": $0.goal, "value": $0.value, "unit": $0.unit] },
+                            "creation_date": dateString,
+                            "progress_rate": 0] as [String : Any]
+
 
                 // Firebase Realtime Databaseに保存
                 let childUpdates = ["/posts/\(postID)": post]
@@ -140,7 +157,7 @@ struct ThirdPage: View {
     }
 }
 
-struct PageView_Previews: PreviewProvider {
+struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         FirstPage()
     }

@@ -8,6 +8,7 @@ target 'Goal' do
   # Pods for Goal
   pod 'FSCalendar'  #追加
   pod 'Firebase/Database'
+  pod 'Firebase/Auth'
 end
 
 post_install do |installer|
