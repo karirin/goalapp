@@ -13,6 +13,8 @@ struct ProgressRingView: View {
     var intermediate_goal: String
     var intermediate_unit: String
     var intermediate_value: Int
+    @Binding var intermediate_progress: Int
+    var updateProgressInFirebase: () -> Void
     
     var body: some View {
         VStack{
@@ -41,6 +43,20 @@ struct ProgressRingView: View {
                 .font(.title)
                 .fontWeight(.bold)
             HStack{
+                Button(action: {
+                    self.intermediate_progress -= 1
+                    self.updateProgressInFirebase()
+                }) {
+                    Image(systemName: "minus.circle")
+                }
+                Text("\(intermediate_progress)")
+                Button(action: {
+                    self.intermediate_progress += 1
+                    self.updateProgressInFirebase()
+                }) {
+                    Image(systemName: "plus.circle")
+                }
+                Text(" / ")
                 Text("\(intermediate_value)")
                 Text(intermediate_unit)
             }
@@ -51,9 +67,19 @@ struct ProgressRingView: View {
 
 struct ContentView: View {
     @StateObject private var viewModel = GoalViewModel()
-    
+
     var body: some View {
-        ProgressRingView(progress: viewModel.progress, goal: viewModel.goal,intermediate_goal: viewModel.intermediate_goal,intermediate_unit: viewModel.intermediate_unit,intermediate_value: viewModel.intermediate_value)
+        ProgressRingView(
+            progress: viewModel.progress,
+            goal: viewModel.goal,
+            intermediate_goal: viewModel.intermediate_goal,
+            intermediate_unit: viewModel.intermediate_unit,
+            intermediate_value: viewModel.intermediate_value,
+            intermediate_progress: $viewModel.intermediate_progress, // Change this line
+            updateProgressInFirebase: {
+                viewModel.updateIntermediateProgress(viewModel.intermediate_progress) // Change this line
+            }
+        )
             .onAppear {
                 viewModel.fetchGoal()
             }
