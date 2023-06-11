@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 
 class GoalViewModel: ObservableObject {
+    private var db = Database.database().reference()
     @Published var goal = ""
     @Published var progress = 0.0
     @Published var intermediate_goal = ""
@@ -19,15 +20,36 @@ class GoalViewModel: ObservableObject {
     @Published var eventDates = [Date]()
     @Published var refresh = false  // Add this line
     @Published var postKey: String?
-    
-    private var db = Database.database().reference()
+    @Published var intermediateValues = [Int]()
+    @Published var intermediateProgresses = [Int]()
+    // Add this to the GoalViewModel
+    @Published var intermediateGoals: [IntermediateGoal] = []
+
+    struct IntermediateGoal: Identifiable {
+        let id = UUID()
+        var goal: String
+        var progress: Int
+        var unit: String
+        var value: Int
+    }
     
     func calculateProgressRate() {
-        // Check that intermediate_value is not zero to avoid division by zero
-        guard intermediate_value != 0 else { return }
+        // Check that intermediateGoals is not empty to avoid division by zero
+        guard !intermediateGoals.isEmpty else { return }
 
-        // Calculate the progress rate
-        let progress_rate = Double(intermediate_progress) / Double(intermediate_value) * 100
+        // Calculate total progress
+        var totalProgressRate = 0.0
+        for intermediateGoal in intermediateGoals {
+            totalProgressRate += Double(intermediateGoal.progress) / Double(intermediateGoal.value)
+            print("totalProgressRate:\(totalProgressRate)")
+            print("totalProgressRate:\(Double(intermediateGoal.progress))")
+            print("totalProgressRate:\(Double(intermediateGoal.value))")
+        }
+
+        // Calculate the average progress rate
+        let progress_rate = totalProgressRate / Double(intermediateGoals.count) * 100
+        
+        print("progress_rate:\(progress_rate)")
 
         DispatchQueue.main.async {
             // Update the progress state
@@ -47,10 +69,11 @@ class GoalViewModel: ObservableObject {
         }
     }
 
+
     
     func updateIntermediateProgress(_ progress: Int) {
         guard let postKey = self.postKey else { return }
-
+        
         let progressPath = "posts/\(postKey)/intermediate_goal/0/progress"  // Adjust this path if necessary
         db.child(progressPath).setValue(progress) { error, _ in
             if let error = error {
@@ -66,54 +89,47 @@ class GoalViewModel: ObservableObject {
 
     
     func fetchGoal() {
-        db.child("posts").getData { error, snapshot in
+        db.child("posts").getData { [weak self] error, snapshot in
+            guard let self = self else { return }
             if let error = error {
                 print("Error getting data \(error)")
-            } else if let snapshot = snapshot, snapshot.exists() {
-                if let snapshotValue = snapshot.value as? [String: Any] {
-                    for (key, value) in snapshotValue {
-                        self.postKey = key
-                        if let valueDict = value as? [String: Any] {
-                            if let goalValue = valueDict["goal"] as? String {
+            } else if let snapshot = snapshot, snapshot.exists(), let postDict = snapshot.value as? [String: [String: Any]] {
+                for (key, postData) in postDict {
+                    self.postKey = key
+
+                    if let goalValue = postData["goal"] as? String {
+                        DispatchQueue.main.async {
+                            self.goal = goalValue
+                        }
+                    }
+
+                    // Clear the intermediateGoals array
+                    self.intermediateGoals = []
+
+                    if let intermediate_goals = postData["intermediate_goal"] as? [[String: AnyObject]] {
+                        for intermediate_goal in intermediate_goals {
+                            if let goal = intermediate_goal["goal"] as? String,
+                               let unit = intermediate_goal["unit"] as? String,
+                               let value = intermediate_goal["value"] as? Int,
+                               let progress = intermediate_goal["progress"] as? Int {
                                 DispatchQueue.main.async {
-                                    self.goal = goalValue
-                                }
-                            }
-                            if let intermediate_goals = valueDict["intermediate_goal"] as? [[String: AnyObject]] {
-                                for intermediate_goal in intermediate_goals {
-                                    if let goal = intermediate_goal["goal"] as? String,
-                                       let unit = intermediate_goal["unit"] as? String,
-                                       let value = intermediate_goal["value"] as? Int,
-                                       let progress = intermediate_goal["progress"] as? Int {
-                                        DispatchQueue.main.async {
-                                            self.intermediate_goal = goal
-                                            self.intermediate_unit = unit
-                                            self.intermediate_value = value
-                                            self.intermediate_progress = progress
-                                        }
-                                    }
-                                }
-                            }
-                            if let progressValue = valueDict["progress_rate"] as? Double {
-                                DispatchQueue.main.async {
-                                    self.progress = progressValue / 100  // ここでは進捗率を0.0から1.0の範囲に変換します
-                                }
-                            }
-                            if let achievementDateString = valueDict["achievement_date"] as? String {
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z" // Adjust this format to match `achievement_date`
-                                if let achievementDate = dateFormatter.date(from: achievementDateString) {
-                                    DispatchQueue.main.async {
-                                        self.eventDates.append(achievementDate) // Add date to eventDates
-                                        print("Event date added: \(achievementDate)")
-                                        self.refresh.toggle()  // Toggle refresh after the value is added
-                                    }
+                                    self.intermediate_goal = goal
+                                    self.intermediate_unit = unit
+                                    self.intermediate_value = value
+                                    self.intermediate_progress = progress
+
+                                    // 中間目標をIntermediateGoalとして保存
+                                    self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value))
                                 }
                             }
                         }
                     }
+
+                    // 全体の進捗率を計算
+                    self.calculateProgressRate()
                 }
             }
         }
     }
+
 }
