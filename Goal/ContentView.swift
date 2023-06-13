@@ -10,14 +10,11 @@ import SwiftUI
 struct ProgressRingView: View {
     var progress: Double
     var goal: String
-    var intermediate_goal: String
-    var intermediate_unit: String
-    var intermediate_value: Int
-    @Binding var intermediate_progress: Int
-    var updateProgressInFirebase: () -> Void
-    
+    var intermediate_goals: [GoalViewModel.IntermediateGoal]
+    var updateProgressInFirebase: (Int, Int) -> Void
+
     var body: some View {
-        VStack{
+        VStack {
             ZStack {
                 Circle()
                     .stroke(lineWidth: 10)
@@ -39,52 +36,73 @@ struct ProgressRingView: View {
                         .fontWeight(.bold)
                 }
             }
-            Text(intermediate_goal)
-                .font(.title)
-                .fontWeight(.bold)
-            HStack{
-                Button(action: {
-                    self.intermediate_progress -= 1
-                    self.updateProgressInFirebase()
-                }) {
-                    Image(systemName: "minus.circle")
+            
+            TabView {
+                ForEach(0..<intermediate_goals.count, id: \.self) { index in
+                    let intermediate_goal = intermediate_goals[index]
+                    VStack {
+                        Text(intermediate_goal.goal)
+                            .font(.title)
+                            .fontWeight(.bold)
+                        HStack {
+                            Button(action: {
+                                updateProgressInFirebase(index, intermediate_goal.progress - 1)
+                                //print("intermediate_goal Button:\(intermediate_goal.progress)")
+                            }) {
+                                Image(systemName: "minus.circle")
+                            }
+                            Text("\(intermediate_goal.progress)")
+                            Button(action: {
+                                updateProgressInFirebase(index, intermediate_goal.progress + 1)
+                                //print("intermediate_goal Button:\(intermediate_goal.progress)")
+                            }) {
+                                Image(systemName: "plus.circle")
+                            }
+                            Text(" / ")
+                            Text("\(intermediate_goal.value)")
+                            Text(intermediate_goal.unit)
+                        }
+                    }
                 }
-                Text("\(intermediate_progress)")
-                Button(action: {
-                    self.intermediate_progress += 1
-                    self.updateProgressInFirebase()
-                }) {
-                    Image(systemName: "plus.circle")
-                }
-                Text(" / ")
-                Text("\(intermediate_value)")
-                Text(intermediate_unit)
             }
+            .tabViewStyle(PageTabViewStyle())
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
         }
-        
     }
 }
+
+
 
 struct ContentView: View {
     @StateObject private var viewModel = GoalViewModel()
 
     var body: some View {
+        Group {
+            if viewModel.dataFetched {
+                //Text("\(viewModel.dataFetched)")
         ProgressRingView(
             progress: viewModel.progress,
             goal: viewModel.goal,
-            intermediate_goal: viewModel.intermediate_goal,
-            intermediate_unit: viewModel.intermediate_unit,
-            intermediate_value: viewModel.intermediate_value,
-            intermediate_progress: $viewModel.intermediate_progress, // Change this line
-            updateProgressInFirebase: {
-                viewModel.updateIntermediateProgress(viewModel.intermediate_progress) // Change this line
+            intermediate_goals: viewModel.intermediateGoals,  // Change this line
+            updateProgressInFirebase: { index, newProgress in
+                //print("aaaaaaaaa")
+                //print("intermediateGoals000000:\(intermediateGoals)")
+                print("updateProgressInFirebase index:\(index)")
+                print("updateProgressInFirebase newProgress:\(newProgress)")
+                viewModel.updateIntermediateProgress(index, newProgress) // Change this line
             }
         )
+            } else {
+                // Display a loading indicator or placeholder here
+                Text("Loading...")
+            }
+        }
             .onAppear {
                 viewModel.fetchGoal()
             }
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

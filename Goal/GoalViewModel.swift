@@ -24,6 +24,8 @@ class GoalViewModel: ObservableObject {
     @Published var intermediateProgresses = [Int]()
     // Add this to the GoalViewModel
     @Published var intermediateGoals: [IntermediateGoal] = []
+    @Published var rewards: [Reward] = []
+    @Published var dataFetched = false
 
     struct IntermediateGoal: Identifiable {
         let id = UUID()
@@ -33,7 +35,14 @@ class GoalViewModel: ObservableObject {
         var value: Int
     }
     
+    struct Reward: Identifiable {
+        let id = UUID()
+        var name: String
+        var progress: Int
+    }
+
     func calculateProgressRate() {
+        
         // Check that intermediateGoals is not empty to avoid division by zero
         guard !intermediateGoals.isEmpty else { return }
 
@@ -41,15 +50,10 @@ class GoalViewModel: ObservableObject {
         var totalProgressRate = 0.0
         for intermediateGoal in intermediateGoals {
             totalProgressRate += Double(intermediateGoal.progress) / Double(intermediateGoal.value)
-            print("totalProgressRate:\(totalProgressRate)")
-            print("totalProgressRate:\(Double(intermediateGoal.progress))")
-            print("totalProgressRate:\(Double(intermediateGoal.value))")
         }
 
         // Calculate the average progress rate
         let progress_rate = totalProgressRate / Double(intermediateGoals.count) * 100
-        
-        print("progress_rate:\(progress_rate)")
 
         DispatchQueue.main.async {
             // Update the progress state
@@ -57,9 +61,9 @@ class GoalViewModel: ObservableObject {
         }
 
         // Update the progress_rate in Firebase
-        guard let postKey = self.postKey else { return }
-
-        let progressRatePath = "posts/\(postKey)/progress_rate"  // Adjust this path if necessary
+        // Ensure postKey is unwrapped properly
+        guard let unwrappedPostKey = self.postKey else { return }
+        let progressRatePath = "posts/\(unwrappedPostKey)/progress_rate"
         db.child(progressRatePath).setValue(progress_rate) { error, _ in
             if let error = error {
                 print("Error updating progress_rate: \(error)")
@@ -69,24 +73,24 @@ class GoalViewModel: ObservableObject {
         }
     }
 
-
-    
-    func updateIntermediateProgress(_ progress: Int) {
-        guard let postKey = self.postKey else { return }
-        
-        let progressPath = "posts/\(postKey)/intermediate_goal/0/progress"  // Adjust this path if necessary
-        db.child(progressPath).setValue(progress) { error, _ in
+    func updateIntermediateProgress(_ index: Int, _ progress: Int) {
+        print("intermediateGoals111:\(intermediateGoals)")
+        guard index < intermediateGoals.count else { return }
+        intermediateGoals[index].progress = progress
+        if let unwrappedPostKey = self.postKey {
+            let progressPath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/progress"
+            db.child(progressPath).setValue(progress) { error, _ in
             if let error = error {
                 print("Error updating data: \(error)")
             } else {
                 print("Data updated successfully")
             }
         }
-
+        
         // Call calculateProgressRate() after updating intermediate_progress
         calculateProgressRate()
     }
-
+    }
     
     func fetchGoal() {
         db.child("posts").getData { [weak self] error, snapshot in
@@ -96,6 +100,10 @@ class GoalViewModel: ObservableObject {
             } else if let snapshot = snapshot, snapshot.exists(), let postDict = snapshot.value as? [String: [String: Any]] {
                 for (key, postData) in postDict {
                     self.postKey = key
+
+                    if let validKey = key as? String {
+                        self.postKey = validKey
+                    }
 
                     if let goalValue = postData["goal"] as? String {
                         DispatchQueue.main.async {
@@ -113,20 +121,32 @@ class GoalViewModel: ObservableObject {
                                let value = intermediate_goal["value"] as? Int,
                                let progress = intermediate_goal["progress"] as? Int {
                                 DispatchQueue.main.async {
-                                    self.intermediate_goal = goal
-                                    self.intermediate_unit = unit
-                                    self.intermediate_value = value
-                                    self.intermediate_progress = progress
-
-                                    // 中間目標をIntermediateGoalとして保存
                                     self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value))
                                 }
                             }
                         }
                     }
 
-                    // 全体の進捗率を計算
-                    self.calculateProgressRate()
+                    self.rewards = []
+
+                    if let rewards = postData["rewards"] as? [[String: AnyObject]] {
+                        for reward in rewards {
+                            if let name = reward["name"] as? String,
+                               let progress = reward["progress"] as? Int {
+                                DispatchQueue.main.async {
+                                    self.rewards.append(Reward(name: name, progress: progress))
+                                }
+                            }
+                        }
+                    }
+
+                    DispatchQueue.main.async {
+                        // 全体の進捗率を計算
+                        self.calculateProgressRate()
+                        
+                        // Set dataFetched to true after fetching data and calculating progress
+                        self.dataFetched = true
+                    }
                 }
             }
         }

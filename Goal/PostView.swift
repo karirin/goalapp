@@ -69,7 +69,7 @@ struct RootView: View {
         case .fourth:
             FourthPage(goal: $appState.goal, date: $appState.date, milestones: $appState.milestones)
         case .content:
-            ContentView()
+            TopView()
         }
     }
 }
@@ -179,37 +179,6 @@ struct ThirdPage: View {
                 .cornerRadius(30.0)
                 .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
 
-//            Button(action: {
-//
-//                // 新しいpost IDを生成
-//                let postID = ref.child("posts").childByAutoId().key
-//                let now = Date()
-//                let formatter = DateFormatter()
-//                formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-//                let dateString = formatter.string(from: now)
-//
-//                // Get current user id
-//                guard let currentUserId = AuthManager.shared.user?.uid else {
-//                    print("No current user found")
-//                    return
-//                }
-//
-//                // 保存するデータの作成
-//                let post = ["userId": currentUserId,
-//                            "goal": self.goal,
-//                            "achievement_date": self.date.description,
-//                            "intermediate_goal": self.milestones.map { ["goal": $0.goal, "value": $0.value, "unit": $0.unit] },
-//                            "creation_date": dateString,
-//                            "progress_rate": 0] as [String : Any]
-//
-//
-//                // Firebase Realtime Databaseに保存
-//                let childUpdates = ["/posts/\(postID)": post]
-//                ref.updateChildValues(childUpdates)
-//
-//            }) {
-//                Text("投稿")
-//            }
             NavigationLink(destination: FourthPage(goal: $goal, date: $date, milestones: $milestones)) {
                 Text("次へ")
             }
@@ -294,7 +263,6 @@ struct FourthPage: View {
                             "rewards": self.rewards.map { ["name": $0.name, "progress": $0.progress] },
                             "creation_date": dateString,
                             "progress_rate": 0] as [String : Any]
-
                 // Firebase Realtime Databaseに保存
                 let childUpdates = ["/posts/\(postID)": post]
                 ref.updateChildValues(childUpdates)
@@ -307,8 +275,30 @@ struct FourthPage: View {
             }
                         
             Button(action: {
-                // Transition to ContentView without saving rewards
-                self.rewards = [Reward(name: "", progress: 0)]
+                // 新しいpost IDを生成
+                let postID = ref.child("posts").childByAutoId().key
+                let now = Date()
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                let dateString = formatter.string(from: now)
+                            
+                // Get current user id
+                guard let currentUserId = AuthManager.shared.user?.uid else {
+                    print("No current user found")
+                    return
+                }
+                            
+                // 保存するデータの作成
+                let post = ["userId": currentUserId,
+                            "goal": self.goal,
+                            "achievement_date": self.date.description,
+                            "intermediate_goal": self.milestones.map { ["goal": $0.goal, "value": $0.value, "unit": $0.unit, "progress": $0.progress] },
+                            "rewards": "",
+                            "creation_date": dateString,
+                            "progress_rate": 0] as [String : Any]
+                // Firebase Realtime Databaseに保存
+                let childUpdates = ["/posts/\(postID)": post]
+                ref.updateChildValues(childUpdates)
                 self.presentationMode.wrappedValue.dismiss()
                 router.currentPage = .content
             }) {

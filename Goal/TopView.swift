@@ -10,6 +10,8 @@ import FirebaseDatabase
 import UIKit
 
 struct TopView: View {
+    @StateObject var viewModel = GoalViewModel()
+    
     var body: some View {
         VStack {
                 TabView {
@@ -47,6 +49,23 @@ struct TopView: View {
                     .tabItem {
                         Image(systemName: "calendar")
                         Text("カレンダー")
+                    }
+                    ZStack {
+                        RewardsView()
+                        //                            .background(Color(red: 0.95, green: 0.95, blue: 0.97, opacity: 1.0))
+                        
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView()
+//                                    .padding(.trailing, 10)
+//                            }
+//                            Spacer()
+//                        }
+                    }
+                    .tabItem {
+                        Image(systemName: "gift")
+                        Text("ご褒美")
                     }
                     
 //                    ZStack {

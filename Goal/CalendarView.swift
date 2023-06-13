@@ -74,9 +74,9 @@ struct CalendarUIView: UIViewRepresentable {
         func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
             let eventDates = viewModel.eventDates.map { dateFormatter.string(from: $0) }  // viewModelから最新のeventDatesを取得
-            print(eventDates)
+            //print(eventDates)
             let dateString = dateFormatter.string(from: date)
-            //print(dateString)
+            print(dateString)
             if eventDates.contains(dateString) {
                 return 1
             }
