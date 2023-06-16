@@ -52,8 +52,8 @@ struct CalendarUIView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {
-        if refresh {
-            uiView.setNeedsLayout()
+        if let fsCalendar = uiView as? FSCalendar, refresh {
+            fsCalendar.reloadData()
         }
     }
     
@@ -69,22 +69,22 @@ struct CalendarUIView: UIViewRepresentable {
         init(_ parent: CalendarUIView, viewModel: GoalViewModel) {
             self.parent = parent
             self.viewModel = viewModel
+            self.dateFormatter.dateFormat = "yyyy-MM-dd"
         }
         
         func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-            let eventDates = viewModel.eventDates.map { dateFormatter.string(from: $0) }  // viewModelから最新のeventDatesを取得
-            //print(eventDates)
-            let dateString = dateFormatter.string(from: date)
-            print(dateString)
-            if eventDates.contains(dateString) {
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
+            let components = calendar.dateComponents([.year, .month, .day], from: date)
+            let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
+            print("viewModel.achievementDates:\(viewModel.achievementDates)")
+            print("achievementDatesComponents:\(achievementDatesComponents)")
+            print("components:\(components)")
+            
+            if achievementDatesComponents.contains(components) {
                 return 1
             }
             return 0
-        }
-        
-        func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-            parent.selectedDate = date  // selectedDateを直接更新
         }
     }
 }

@@ -247,7 +247,10 @@ struct FourthPage: View {
                 let now = Date()
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                let dateString = formatter.string(from: now)
+                let dateString_now = formatter.string(from: now)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let dateString = dateFormatter.string(from: self.date)
                             
                 // Get current user id
                 guard let currentUserId = AuthManager.shared.user?.uid else {
@@ -258,10 +261,10 @@ struct FourthPage: View {
                 // 保存するデータの作成
                 let post = ["userId": currentUserId,
                             "goal": self.goal,
-                            "achievement_date": self.date.description,
+                            "achievement_date": dateString,
                             "intermediate_goal": self.milestones.map { ["goal": $0.goal, "value": $0.value, "unit": $0.unit, "progress": $0.progress] },
                             "rewards": self.rewards.map { ["name": $0.name, "progress": $0.progress] },
-                            "creation_date": dateString,
+                            "creation_date": dateString_now,
                             "progress_rate": 0] as [String : Any]
                 // Firebase Realtime Databaseに保存
                 let childUpdates = ["/posts/\(postID)": post]
@@ -280,7 +283,10 @@ struct FourthPage: View {
                 let now = Date()
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                let dateString = formatter.string(from: now)
+                let dateString_now = formatter.string(from: now)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let dateString = dateFormatter.string(from: self.date)
                             
                 // Get current user id
                 guard let currentUserId = AuthManager.shared.user?.uid else {
@@ -291,10 +297,10 @@ struct FourthPage: View {
                 // 保存するデータの作成
                 let post = ["userId": currentUserId,
                             "goal": self.goal,
-                            "achievement_date": self.date.description,
+                            "achievement_date": dateString,
                             "intermediate_goal": self.milestones.map { ["goal": $0.goal, "value": $0.value, "unit": $0.unit, "progress": $0.progress] },
                             "rewards": "",
-                            "creation_date": dateString,
+                            "creation_date": dateString_now,
                             "progress_rate": 0] as [String : Any]
                 // Firebase Realtime Databaseに保存
                 let childUpdates = ["/posts/\(postID)": post]

@@ -74,7 +74,6 @@ class GoalViewModel: ObservableObject {
     }
 
     func updateIntermediateProgress(_ index: Int, _ progress: Int) {
-        print("intermediateGoals111:\(intermediateGoals)")
         guard index < intermediateGoals.count else { return }
         intermediateGoals[index].progress = progress
         if let unwrappedPostKey = self.postKey {
@@ -139,6 +138,19 @@ class GoalViewModel: ObservableObject {
                             }
                         }
                     }
+                    
+                    if let achievementDateString = postData["achievement_date"] as? String {
+                        // Convert String to Date
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        dateFormatter.timeZone = TimeZone(identifier: "Asia/Tokyo") // Set timeZone to JST
+                        if let achievementDate = dateFormatter.date(from: achievementDateString) {
+                            DispatchQueue.main.async {
+                                self.achievementDates.append(achievementDate)
+                            }
+                        }
+                        print("achievementDateString:\(achievementDateString)")
+                    }
 
                     DispatchQueue.main.async {
                         // 全体の進捗率を計算
@@ -146,6 +158,11 @@ class GoalViewModel: ObservableObject {
                         
                         // Set dataFetched to true after fetching data and calculating progress
                         self.dataFetched = true
+                    }
+                    
+                    DispatchQueue.main.async {
+                        // Set refresh to true after fetching data
+                        self.refresh = true
                     }
                 }
             }
