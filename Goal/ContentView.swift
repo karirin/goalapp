@@ -11,7 +11,7 @@ struct ProgressRingView: View {
     var progress: Double
     var goal: String
     var intermediate_goals: [GoalViewModel.IntermediateGoal]
-    var updateProgressInFirebase: (Int, Int) -> Void
+    var updateProgressInFirebase: (Int, Int, Date) -> Void
 
     var body: some View {
         VStack {
@@ -46,15 +46,15 @@ struct ProgressRingView: View {
                             .fontWeight(.bold)
                         HStack {
                             Button(action: {
-                                updateProgressInFirebase(index, intermediate_goal.progress - 1)
-                                //print("intermediate_goal Button:\(intermediate_goal.progress)")
+                                let currentDate = Date()  // Get current date
+                                updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate)
                             }) {
                                 Image(systemName: "minus.circle")
                             }
                             Text("\(intermediate_goal.progress)")
                             Button(action: {
-                                updateProgressInFirebase(index, intermediate_goal.progress + 1)
-                                //print("intermediate_goal Button:\(intermediate_goal.progress)")
+                                let currentDate = Date()  // Get current date
+                                updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate)
                             }) {
                                 Image(systemName: "plus.circle")
                             }
@@ -71,8 +71,6 @@ struct ProgressRingView: View {
     }
 }
 
-
-
 struct ContentView: View {
     @StateObject private var viewModel = GoalViewModel()
 
@@ -84,12 +82,8 @@ struct ContentView: View {
             progress: viewModel.progress,
             goal: viewModel.goal,
             intermediate_goals: viewModel.intermediateGoals,  // Change this line
-            updateProgressInFirebase: { index, newProgress in
-                //print("aaaaaaaaa")
-                //print("intermediateGoals000000:\(intermediateGoals)")
-                print("updateProgressInFirebase index:\(index)")
-                print("updateProgressInFirebase newProgress:\(newProgress)")
-                viewModel.updateIntermediateProgress(index, newProgress) // Change this line
+            updateProgressInFirebase: { index, newProgress, date in
+                viewModel.updateIntermediateProgress(index, newProgress, date)
             }
         )
             } else {

@@ -61,7 +61,7 @@ struct CalendarUIView: UIViewRepresentable {
         Coordinator(self, viewModel: viewModel) // Pass ViewModel to the Coordinator
     }
     
-    class Coordinator: NSObject, FSCalendarDelegate, FSCalendarDataSource {
+    class Coordinator: NSObject, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
         var parent: CalendarUIView
         var viewModel: GoalViewModel
         let dateFormatter = DateFormatter()
@@ -72,19 +72,28 @@ struct CalendarUIView: UIViewRepresentable {
             self.dateFormatter.dateFormat = "yyyy-MM-dd"
         }
         
-        func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
             var calendar = Calendar.current
             calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
             let components = calendar.dateComponents([.year, .month, .day], from: date)
             let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
-            print("viewModel.achievementDates:\(viewModel.achievementDates)")
-            print("achievementDatesComponents:\(achievementDatesComponents)")
-            print("components:\(components)")
             
             if achievementDatesComponents.contains(components) {
-                return 1
+                return .white // 達成日の文字色を白に
             }
-            return 0
+            return nil // 他の日付はデフォルトの色に
+        }
+
+        func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
+            let components = calendar.dateComponents([.year, .month, .day], from: date)
+            let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
+            
+            if achievementDatesComponents.contains(components) {
+                return .red // 達成日の背景色を赤に
+            }
+            return nil // 他の日付はデフォルトの色に
         }
     }
 }

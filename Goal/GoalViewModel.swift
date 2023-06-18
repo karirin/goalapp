@@ -73,7 +73,7 @@ class GoalViewModel: ObservableObject {
         }
     }
 
-    func updateIntermediateProgress(_ index: Int, _ progress: Int) {
+    func updateIntermediateProgress(_ index: Int, _ progress: Int, _ date: Date) {
         guard index < intermediateGoals.count else { return }
         intermediateGoals[index].progress = progress
         if let unwrappedPostKey = self.postKey {
@@ -85,7 +85,12 @@ class GoalViewModel: ObservableObject {
                 print("Data updated successfully")
             }
         }
-        
+        // Save click_date to Firebase
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let clickDateString = dateFormatter.string(from: date)
+        let datePath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/click_date"
+        db.child(datePath).setValue(clickDateString)
         // Call calculateProgressRate() after updating intermediate_progress
         calculateProgressRate()
     }
@@ -122,6 +127,13 @@ class GoalViewModel: ObservableObject {
                                 DispatchQueue.main.async {
                                     self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value))
                                 }
+                            }
+                            // Fetch click_date from Firebase
+                            if let clickDateString = intermediate_goal["click_date"] as? String {
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "yyyy-MM-dd"
+                                let clickDate = dateFormatter.date(from: clickDateString)
+                                // Here, use the clickDate as needed.
                             }
                         }
                     }
@@ -168,5 +180,4 @@ class GoalViewModel: ObservableObject {
             }
         }
     }
-
 }
