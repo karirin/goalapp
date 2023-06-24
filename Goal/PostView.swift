@@ -31,7 +31,6 @@ class NavigationRouter: ObservableObject {
     }
     
     @Published var currentPage: Page = .first
-    @Published var progress: Float = 0.0
 }
 
 class AppState: ObservableObject {
@@ -60,8 +59,6 @@ struct RootView: View {
     
     var body: some View {
         VStack {
-            ProgressView(value: router.progress, total: 100)
-                .progressViewStyle(LinearProgressViewStyle())
             switch router.currentPage {
             case .first:
                 FirstPage()
@@ -81,7 +78,6 @@ struct RootView: View {
 
 struct FirstPage: View {
     @State private var goal: String = ""
-    @EnvironmentObject var router: NavigationRouter
     
     var body: some View {
         NavigationView {
@@ -91,9 +87,6 @@ struct FirstPage: View {
 
                 NavigationLink(destination: SecondPage(goal: $goal)) {
                     Text("次へ")
-                }
-                .onTapGesture {
-                    router.progress = 25.0
                 }
                 .padding()
             }
@@ -106,7 +99,6 @@ struct SecondPage: View {
     @Binding var goal: String
     @State private var date = Date()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @EnvironmentObject var router: NavigationRouter
     
     var btnBack : some View {
         Button(action: {
@@ -131,9 +123,6 @@ struct SecondPage: View {
             NavigationLink(destination: ThirdPage(goal: $goal, date: $date)) {
                 Text("次へ")
             }
-            .onTapGesture {
-                router.progress = 25.0
-            }
             .padding()
         }
         .navigationTitle("達成日入力画面")
@@ -148,7 +137,6 @@ struct ThirdPage: View {
     @State private var milestones: [Milestone] = [Milestone(goal: "", value: 0, unit: "")]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let ref = Database.database().reference()
-    @EnvironmentObject var router: NavigationRouter
     
     var btnBack : some View {
         Button(action: {
@@ -195,9 +183,6 @@ struct ThirdPage: View {
 
             NavigationLink(destination: FourthPage(goal: $goal, date: $date, milestones: $milestones)) {
                 Text("次へ")
-            }
-            .onTapGesture {
-                router.progress = 25.0
             }
         }
         .navigationTitle("中間目標入力画面")
