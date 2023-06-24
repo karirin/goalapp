@@ -11,63 +11,93 @@ struct ProgressRingView: View {
     var progress: Double
     var goal: String
     var intermediate_goals: [GoalViewModel.IntermediateGoal]
-    var updateProgressInFirebase: (Int, Int, Date) -> Void
+    var updateProgressInFirebase: (Int, Int, Date, Bool) -> Void
 
     var body: some View {
         VStack {
             ZStack {
                 Circle()
-                    .stroke(lineWidth: 10)
+                    .stroke(lineWidth: 15)
                     .opacity(0.3)
-                    .padding()
+                    .padding(-20)
+                    .padding(.leading,5)
                 
                 Circle()
                     .trim(from: 0.0, to: CGFloat(min(self.progress, 1.0)))
-                    .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .stroke(style: StrokeStyle(lineWidth: 15, lineCap: .round))
                     .rotationEffect(Angle(degrees: -90))
-                    .padding()
+                    .padding(-20)
+                    .padding(.leading,5)
+                    .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 1))
                 
                 VStack {
                     Text(goal)
                         .font(.title)
                         .fontWeight(.bold)
                     Text("\(Int(progress * 100))%")
-                        .font(.largeTitle)
+                        .font(.system(size: 40))
                         .fontWeight(.bold)
                 }
             }
-            
-            TabView {
-                ForEach(0..<intermediate_goals.count, id: \.self) { index in
-                    let intermediate_goal = intermediate_goals[index]
-                    VStack {
-                        Text(intermediate_goal.goal)
-                            .font(.title)
-                            .fontWeight(.bold)
-                        HStack {
+
+            ScrollView { // Add this
+                VStack {
+                    ForEach(0..<intermediate_goals.count, id: \.self) { index in
+                        let intermediate_goal = intermediate_goals[index]
+                        HStack{
+                            Text(intermediate_goal.goal)
+                                .font(.system(size: 24))
+                                .padding(.top)
+                                .padding(.bottom,1)
+                        Spacer()
+                        }
+                        .padding(.leading)
+                        HStack{
                             Button(action: {
                                 let currentDate = Date()  // Get current date
-                                updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate)
+                                guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
+                                //print("Next day: \(nextDay)")
+                                updateProgressInFirebase(index, intermediate_goal.progress - 1, nextDay, false) // Remove isProgressIncreased label
                             }) {
                                 Image(systemName: "minus.circle")
                             }
-                            Text("\(intermediate_goal.progress)")
+                            .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
+                            .padding(.leading)
+                            .font(.system(size: 30))
+                            
+                            Spacer()
+                            VStack {
+                                HStack {
+                                    Text("\(intermediate_goal.progress)")
+                                    Text(" / ")
+                                    Text("\(intermediate_goal.value)")
+                                    Text(intermediate_goal.unit)
+                                }
+                            }
+                            .font(.system(size: 25))
+                            //.padding(.bottom)
+                            Spacer()
                             Button(action: {
                                 let currentDate = Date()  // Get current date
-                                updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate)
+                                //print("currentDate:\(currentDate)")
+                                guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
+                                //print("Next day: \(nextDay)")
+                                updateProgressInFirebase(index, intermediate_goal.progress + 1, nextDay, true) // Remove isProgressIncreased label
                             }) {
                                 Image(systemName: "plus.circle")
                             }
-                            Text(" / ")
-                            Text("\(intermediate_goal.value)")
-                            Text(intermediate_goal.unit)
+                            .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
+                            .padding(.trailing)
+                            .font(.system(size: 30))
                         }
                     }
                 }
             }
-            .tabViewStyle(PageTabViewStyle())
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            Spacer()
         }
+        .padding()
+        .padding(.top,20)
+         .background(Color(red: 0.99, green: 0.99, blue: 0.99, opacity: 1.0))
     }
 }
 
@@ -78,14 +108,14 @@ struct ContentView: View {
         Group {
             if viewModel.dataFetched {
                 //Text("\(viewModel.dataFetched)")
-        ProgressRingView(
-            progress: viewModel.progress,
-            goal: viewModel.goal,
-            intermediate_goals: viewModel.intermediateGoals,  // Change this line
-            updateProgressInFirebase: { index, newProgress, date in
-                viewModel.updateIntermediateProgress(index, newProgress, date)
-            }
-        )
+                ProgressRingView(
+                    progress: viewModel.progress,
+                    goal: viewModel.goal,
+                    intermediate_goals: viewModel.intermediateGoals,  // Change this line
+                    updateProgressInFirebase: { index, newProgress, date, isProgressIncreased in
+                        viewModel.updateIntermediateProgress(index, newProgress, date, isProgressIncreased: isProgressIncreased)
+                    }
+                )
             } else {
                 // Display a loading indicator or placeholder here
                 Text("Loading...")

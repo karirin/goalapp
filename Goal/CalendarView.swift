@@ -48,6 +48,9 @@ struct CalendarUIView: UIViewRepresentable {
         
         fsCalendar.appearance.borderRadius = 0 //本日・選択日の塗りつぶし角丸量
         
+        fsCalendar.appearance.subtitleOffset = CGPoint(x: 0, y: 10)  // Adjust the position of subtitle label
+            fsCalendar.appearance.eventOffset = CGPoint(x: 0, y: -10)  // Adjust the position of event dot
+        
         return fsCalendar
     }
     
@@ -72,14 +75,35 @@ struct CalendarUIView: UIViewRepresentable {
             self.dateFormatter.dateFormat = "yyyy-MM-dd"
         }
         
+        func isToday(_ date: Date) -> Bool {
+            let calendar = Calendar.current
+            return calendar.isDateInToday(date)
+        }
+        
+        func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+            let goalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: date)
+            //print("date:\(date)")
+            //print("goalsAndClicks:\(goalsAndClicks)")
+            // クリック数が1以上のイベントだけをカウントします。(
+            let eventCount = goalsAndClicks.filter { $1 >= 1 }.count
+            //print("eventCount:\(eventCount)")
+            return eventCount
+        }
+        
+        func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+            parent.selectedDate = date
+        }
+        
         func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
             var calendar = Calendar.current
             calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
             let components = calendar.dateComponents([.year, .month, .day], from: date)
             let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
-            
-            if achievementDatesComponents.contains(components) {
-                return .white // 達成日の文字色を白に
+
+            if isToday(date) {
+                return .black // 今日の文字色を先にチェックして、黒に設定
+            } else if achievementDatesComponents.contains(components) {
+                return .white // 次に達成日の文字色を白に設定
             }
             return nil // 他の日付はデフォルトの色に
         }
@@ -89,32 +113,49 @@ struct CalendarUIView: UIViewRepresentable {
             calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
             let components = calendar.dateComponents([.year, .month, .day], from: date)
             let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
-            
+
             if achievementDatesComponents.contains(components) {
                 return .red // 達成日の背景色を赤に
+            } else if isToday(date) { // Add this line
+                return .white // 今日の背景色を青に設定（自由に変更可能）
             }
             return nil // 他の日付はデフォルトの色に
         }
+
     }
 }
 
 struct CalendarTestView: View {
     @State var selectedDate = Date()
     @StateObject var viewModel = GoalViewModel()
+    @State var selectedGoalsAndClicks: [(GoalViewModel.IntermediateGoal, Int)] = []
     
     var body: some View {
         VStack{
             CalendarUIView(selectedDate: $selectedDate, viewModel: viewModel, refresh: $viewModel.refresh) // Pass refresh binding to the CalendarUIView
-                .frame(height: 400)
-            Text(selectedDate,style: .date)
-                .font(.title)
-                .padding()
+                .frame(height: 500)
+            ScrollView {
+                VStack{
+                    ForEach(selectedGoalsAndClicks, id: \.0.id) { goal, clickCount in
+                        HStack{
+                            Text("\(goal.goal)")
+                            Spacer()
+                            Text("\(clickCount) \(goal.unit)")
+                        }
+                        .font(.system(size: 20))
+                        .padding(.horizontal)
+                        .padding(.vertical,5)
+                    }
+                }.frame(height: 100)
+            }
         }.onAppear {
             viewModel.fetchGoal() // Fetch data when view appears
+        }.onChange(of: selectedDate) { newDate in
+            selectedGoalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: newDate)
         }
+        .background(Color(red: 0.99, green: 0.99, blue: 0.99, opacity: 1.0))
     }
 }
-
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {

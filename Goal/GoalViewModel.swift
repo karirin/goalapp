@@ -22,7 +22,6 @@ class GoalViewModel: ObservableObject {
     @Published var postKey: String?
     @Published var intermediateValues = [Int]()
     @Published var intermediateProgresses = [Int]()
-    // Add this to the GoalViewModel
     @Published var intermediateGoals: [IntermediateGoal] = []
     @Published var rewards: [Reward] = []
     @Published var dataFetched = false
@@ -33,6 +32,7 @@ class GoalViewModel: ObservableObject {
         var progress: Int
         var unit: String
         var value: Int
+        var clicks: [Click] // Add this line
     }
     
     struct Reward: Identifiable {
@@ -40,28 +40,28 @@ class GoalViewModel: ObservableObject {
         var name: String
         var progress: Int
     }
-
+    
+    struct Click: Identifiable {
+        let id = UUID()
+        var clickCount: Int
+        var clickDate: Date
+    }
+    
     func calculateProgressRate() {
         
-        // Check that intermediateGoals is not empty to avoid division by zero
         guard !intermediateGoals.isEmpty else { return }
 
-        // Calculate total progress
         var totalProgressRate = 0.0
         for intermediateGoal in intermediateGoals {
             totalProgressRate += Double(intermediateGoal.progress) / Double(intermediateGoal.value)
         }
 
-        // Calculate the average progress rate
         let progress_rate = totalProgressRate / Double(intermediateGoals.count) * 100
 
         DispatchQueue.main.async {
-            // Update the progress state
             self.progress = progress_rate / 100
         }
 
-        // Update the progress_rate in Firebase
-        // Ensure postKey is unwrapped properly
         guard let unwrappedPostKey = self.postKey else { return }
         let progressRatePath = "posts/\(unwrappedPostKey)/progress_rate"
         db.child(progressRatePath).setValue(progress_rate) { error, _ in
@@ -73,31 +73,67 @@ class GoalViewModel: ObservableObject {
         }
     }
 
-    func updateIntermediateProgress(_ index: Int, _ progress: Int, _ date: Date) {
+    func updateIntermediateProgress(_ index: Int, _ newProgress: Int, _ date: Date, isProgressIncreased: Bool = true) { // Add isProgressIncreased parameter
         guard index < intermediateGoals.count else { return }
-        intermediateGoals[index].progress = progress
+
+        let oldProgress = intermediateGoals[index].progress
+
+        intermediateGoals[index].progress = newProgress
+
         if let unwrappedPostKey = self.postKey {
             let progressPath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/progress"
-            db.child(progressPath).setValue(progress) { error, _ in
-            if let error = error {
-                print("Error updating data: \(error)")
-            } else {
-                print("Data updated successfully")
+            db.child(progressPath).setValue(newProgress) // Error handling omitted for brevity
+
+            let clickCountPath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/clicks"
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let clickDateString = dateFormatter.string(from: date)
+
+            db.child(clickCountPath).queryOrdered(byChild: "click_date").queryEqual(toValue: clickDateString).getData { [weak self] (error, snapshot) in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("Error getting data \(error)")
+                } else if let snapshot = snapshot, snapshot.exists(), let value = snapshot.value as? [String: Any], let key = value.keys.first {
+                    if var clickData = value[key] as? [String: Any], let clickCount = clickData["click_count"] as? Int {
+                        // When progress increased, increase the click count
+                        if isProgressIncreased {
+                            clickData["click_count"] = clickCount + 1
+                            db.child("\(clickCountPath)/\(key)").setValue(clickData)
+                        }
+                        // When progress decreased, decrease the click count
+                        else {
+                            // When click count > 1, decrease the click count
+                            if clickCount > 1 {
+                                clickData["click_count"] = clickCount - 1
+                                db.child("\(clickCountPath)/\(key)").setValue(clickData)
+                            }
+                            // When click count = 1, remove the click data
+                            else {
+                                db.child("\(clickCountPath)/\(key)").removeValue()
+                            }
+                        }
+                    }
+                } else if isProgressIncreased {
+                    let clickData: [String: Any] = [
+                        "click_count": 1,
+                        "click_date": clickDateString
+                    ]
+                    db.child(clickCountPath).childByAutoId().setValue(clickData) // Error handling omitted for brevity
+                }
             }
+
+            calculateProgressRate()
         }
-        // Save click_date to Firebase
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let clickDateString = dateFormatter.string(from: date)
-        let datePath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/click_date"
-        db.child(datePath).setValue(clickDateString)
-        // Call calculateProgressRate() after updating intermediate_progress
-        calculateProgressRate()
     }
-    }
-    
+
+
     func fetchGoal() {
-        db.child("posts").getData { [weak self] error, snapshot in
+        guard let userID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        db.child("posts").queryOrdered(byChild: "userId").queryEqual(toValue: userID).getData { [weak self] error, snapshot in
             guard let self = self else { return }
             if let error = error {
                 print("Error getting data \(error)")
@@ -115,7 +151,6 @@ class GoalViewModel: ObservableObject {
                         }
                     }
 
-                    // Clear the intermediateGoals array
                     self.intermediateGoals = []
 
                     if let intermediate_goals = postData["intermediate_goal"] as? [[String: AnyObject]] {
@@ -124,19 +159,29 @@ class GoalViewModel: ObservableObject {
                                let unit = intermediate_goal["unit"] as? String,
                                let value = intermediate_goal["value"] as? Int,
                                let progress = intermediate_goal["progress"] as? Int {
-                                DispatchQueue.main.async {
-                                    self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value))
+                                var clicks: [Click] = [] // Initialize the clicks array
+
+                                if let clicksData = intermediate_goal["clicks"] as? [String: [String: Any]] {
+                                    for (_, clickData) in clicksData {
+                                        if let clickCount = clickData["click_count"] as? Int,
+                                            let clickDateString = clickData["click_date"] as? String {
+                                            let dateFormatter = DateFormatter()
+                                            dateFormatter.dateFormat = "yyyy-MM-dd"
+                                            if let clickDate = dateFormatter.date(from: clickDateString) {
+                                                clicks.append(Click(clickCount: clickCount, clickDate: clickDate))
+                                            }
+                                        }
+                                    }
                                 }
-                            }
-                            // Fetch click_date from Firebase
-                            if let clickDateString = intermediate_goal["click_date"] as? String {
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "yyyy-MM-dd"
-                                let clickDate = dateFormatter.date(from: clickDateString)
-                                // Here, use the clickDate as needed.
+
+
+                                DispatchQueue.main.async {
+                                    self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value, clicks: clicks))
+                                }
                             }
                         }
                     }
+
 
                     self.rewards = []
 
@@ -152,7 +197,6 @@ class GoalViewModel: ObservableObject {
                     }
                     
                     if let achievementDateString = postData["achievement_date"] as? String {
-                        // Convert String to Date
                         let dateFormatter = DateFormatter()
                         dateFormatter.dateFormat = "yyyy-MM-dd"
                         dateFormatter.timeZone = TimeZone(identifier: "Asia/Tokyo") // Set timeZone to JST
@@ -161,14 +205,12 @@ class GoalViewModel: ObservableObject {
                                 self.achievementDates.append(achievementDate)
                             }
                         }
-                        print("achievementDateString:\(achievementDateString)")
+                        //print("achievementDateString:\(achievementDateString)")
                     }
 
                     DispatchQueue.main.async {
-                        // 全体の進捗率を計算
                         self.calculateProgressRate()
                         
-                        // Set dataFetched to true after fetching data and calculating progress
                         self.dataFetched = true
                     }
                     
@@ -179,5 +221,50 @@ class GoalViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func intermediateGoalsAndClickCounts(on date: Date) -> [(IntermediateGoal, Int)] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+
+        var results: [(IntermediateGoal, Int)] = []
+
+        for intermediateGoal in intermediateGoals {
+            var clickCount = 0
+            for click in intermediateGoal.clicks {
+                let clickDateString = dateFormatter.string(from: click.clickDate)
+               print("clickDateString:\(clickDateString)")
+                if clickDateString == dateString {
+                    clickCount += click.clickCount
+                }
+            }
+            if clickCount > 0 {
+                results.append((intermediateGoal, clickCount))
+            }
+        }
+
+        return results
+    }
+    
+    func clickCount(on date: Date) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+
+        var totalClickCount = 0
+        
+        //print("intermediateGoals:\(intermediateGoals)")
+
+        for intermediateGoal in intermediateGoals {
+            for click in intermediateGoal.clicks {
+                let clickDateString = dateFormatter.string(from: click.clickDate)
+                if clickDateString == dateString {
+                    totalClickCount += click.clickCount
+                }
+            }
+        }
+
+        return totalClickCount
     }
 }
