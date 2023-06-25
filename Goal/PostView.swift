@@ -31,6 +31,42 @@ class NavigationRouter: ObservableObject {
     }
     
     @Published var currentPage: Page = .first
+    @Published var progress: Float = 0.0  // 追加した進捗バー
+    func updateProgress() {
+        switch currentPage {
+        case .first:
+            progress = 0.25
+        case .second:
+            progress = 0.5
+        case .third:
+            progress = 0.75
+        case .fourth, .content:
+            progress = 1.0
+        }
+    }
+
+}
+
+struct ProgressBar: View {
+    @Binding var value: Float
+
+    var body: some View {
+        ProgressView(value: value)
+    }
+}
+
+struct CenteredTitleView: View {
+    var title: String
+
+    var body: some View {
+        HStack {
+            Spacer()
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.primary)
+            Spacer()
+        }
+    }
 }
 
 class AppState: ObservableObject {
@@ -59,6 +95,7 @@ struct RootView: View {
     
     var body: some View {
         VStack {
+            ProgressBar(value: $router.progress)
             switch router.currentPage {
             case .first:
                 FirstPage()
@@ -78,19 +115,37 @@ struct RootView: View {
 
 struct FirstPage: View {
     @State private var goal: String = ""
-    
+    @EnvironmentObject var router: NavigationRouter
+
     var body: some View {
         NavigationView {
             VStack {
-                TextField("目標を入力してください", text: $goal)
+                HStack{
+                Text("目標を入力してください")
+                        .font(.system(size: 30))
+                        .fontWeight(.bold)
+                }
+                Text("このアプリで達成したい目標を入力してください")
+                        .font(.system(size: 18))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                HStack {
+                    Spacer()
+                TextField("目標", text: $goal)
+                    .font(.system(size: 30))
+                    Spacer() // this will push the TextField to the center
+                                    }
                     .padding()
 
                 NavigationLink(destination: SecondPage(goal: $goal)) {
                     Text("次へ")
-                }
+                }.onAppear(perform: {
+                    router.updateProgress()
+                })
                 .padding()
             }
-            .navigationTitle("目標入力画面")
         }
     }
 }
@@ -99,6 +154,7 @@ struct SecondPage: View {
     @Binding var goal: String
     @State private var date = Date()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var router: NavigationRouter
     
     var btnBack : some View {
         Button(action: {
@@ -122,10 +178,12 @@ struct SecondPage: View {
 
             NavigationLink(destination: ThirdPage(goal: $goal, date: $date)) {
                 Text("次へ")
-            }
+            }.onAppear(perform: {
+                router.updateProgress()
+            })
             .padding()
         }
-        .navigationTitle("達成日入力画面")
+        //.navigationTitle("達成日入力画面")
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
     }
@@ -136,6 +194,7 @@ struct ThirdPage: View {
     @Binding var date: Date
     @State private var milestones: [Milestone] = [Milestone(goal: "", value: 0, unit: "")]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var router: NavigationRouter
     let ref = Database.database().reference()
     
     var btnBack : some View {
@@ -183,9 +242,11 @@ struct ThirdPage: View {
 
             NavigationLink(destination: FourthPage(goal: $goal, date: $date, milestones: $milestones)) {
                 Text("次へ")
-            }
+            }//.onAppear(perform: {
+               // router.updateProgress()
+            //})
         }
-        .navigationTitle("中間目標入力画面")
+        //.navigationTitle("中間目標入力画面")
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
     }
@@ -313,7 +374,7 @@ struct FourthPage: View {
                 Text("スキップ")
             }
         }
-        .navigationTitle("ご褒美入力画面")
+        //.navigationTitle("ご褒美入力画面")
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
     }
