@@ -23,8 +23,6 @@ struct RewardsView: View {
                             HStack{
                                 Spacer()
                                 Text("\(Double(viewModel.progress * 100) / Double(reward.progress) * 100)%")
-//                                Text("\(Double(viewModel.progress * 100))")
-//                                Text("\(Double(reward.progress) * 100)")
                             }
                             ProgressView(value: min(Double(viewModel.progress * 100) / Double(reward.progress), 1.0))
 

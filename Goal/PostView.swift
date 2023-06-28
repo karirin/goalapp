@@ -141,7 +141,13 @@ struct FirstPage: View {
 
                 NavigationLink(destination: SecondPage(goal: $goal)) {
                     Text("次へ")
-                }.onAppear(perform: {
+                }
+                .padding(.vertical,10)
+                .padding(.horizontal,25)
+                .font(.headline)
+                .foregroundColor(.white)
+                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .onAppear(perform: {
                     router.updateProgress()
                 })
                 .padding()
@@ -173,12 +179,32 @@ struct SecondPage: View {
 
     var body: some View {
         VStack {
-            DatePicker("達成日を選択してください", selection: $date, displayedComponents: .date)
-                .padding()
-
+            HStack{
+            Text("達成日を入力してください")
+                    .font(.system(size: 30))
+                    .fontWeight(.bold)
+            }
+            Text("目標に対していつまでに達成したいかを入力してください")
+                    .font(.system(size: 18))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            HStack{
+                Spacer()
+                Image(systemName: "calendar")
+                DatePicker("", selection: $date, displayedComponents: .date)
+                Spacer()
+                //.padding()
+            }.frame(width:50)
             NavigationLink(destination: ThirdPage(goal: $goal, date: $date)) {
                 Text("次へ")
-            }.onAppear(perform: {
+            }.padding(.vertical,10)
+                .padding(.horizontal,25)
+                .font(.headline)
+                .foregroundColor(.white)
+                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .onAppear(perform: {
                 router.updateProgress()
             })
             .padding()
@@ -186,6 +212,7 @@ struct SecondPage: View {
         //.navigationTitle("達成日入力画面")
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: btnBack)
+        //Spacer()
     }
 }
 
@@ -220,31 +247,52 @@ struct ThirdPage: View {
 
     var body: some View {
         VStack {
-            ForEach(milestones.indices, id: \.self) { index in
-                TextField("中間目標", text: $milestones[index].goal)
-                TextField("値", text: Binding<String>(
-                    get: { String(self.milestones[index].value) },
-                    set: { self.milestones[index].value = Int($0) ?? 0 }
-                ))
-                TextField("単位", text: $milestones[index].unit)
+            HStack{
+            Text("中間目標を入力してください")
+                    .font(.system(size: 28))
+                    .fontWeight(.bold)
             }
-
-            Button(action: {
-                self.milestones.append(Milestone(goal: "", value: 0, unit: ""))
-            }, label: {
-                Image(systemName: "plus")
-                    .foregroundColor(.white)
-                    .font(.system(size: 24)) // --- 4
-            }).frame(width: 60, height: 60)
-                .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
-                .cornerRadius(30.0)
-                .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
+            Text("目標に対しての中間目標を入力してください")
+                    .font(.system(size: 18))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            ForEach(milestones.indices, id: \.self) { index in
+                HStack{
+                    TextField("中間目標", text: $milestones[index].goal)
+                        .font(.system(size: 22))
+                    TextField("値", text: Binding<String>(
+                        get: { String(self.milestones[index].value) },
+                        set: { self.milestones[index].value = Int($0) ?? 0 }
+                    ))
+                    .font(.system(size: 22))
+                    TextField("単位", text: $milestones[index].unit)
+                        .font(.system(size: 22))
+                }.padding()
+            }
+            HStack{
+                Spacer()
+                Button(action: {
+                    self.milestones.append(Milestone(goal: "", value: 0, unit: ""))
+                }, label: {
+                    Image(systemName: "plus")
+                        .foregroundColor(.white)
+                        .font(.system(size: 24)) // --- 4
+                }).frame(width: 60, height: 60)
+                    .background(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0))
+                    .cornerRadius(30.0)
+                    .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
+            }
+            .padding()
 
             NavigationLink(destination: FourthPage(goal: $goal, date: $date, milestones: $milestones)) {
                 Text("次へ")
-            }//.onAppear(perform: {
-               // router.updateProgress()
-            //})
+            }.padding(.vertical,10)
+                .padding(.horizontal,25)
+                .font(.headline)
+                .foregroundColor(.white)
+                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
         }
         //.navigationTitle("中間目標入力画面")
         .navigationBarBackButtonHidden(true)
@@ -285,25 +333,47 @@ struct FourthPage: View {
 
     var body: some View {
         VStack {
-            ForEach(rewards.indices, id: \.self) { index in
-                TextField("ご褒美名", text: $rewards[index].name)
-                TextField("進捗率", text: Binding<String>(
-                    get: { String(self.rewards[index].progress) },
-                    set: { self.rewards[index].progress = Int($0) ?? 0 }
-                ))
+            HStack{
+            Text("ご褒美を入力してください")
+                    .font(.system(size: 28))
+                    .fontWeight(.bold)
             }
-
-            Button(action: {
-                self.rewards.append(Reward(name: "", progress: 0))
-            }, label: {
-                Image(systemName: "plus")
-                    .foregroundColor(.white)
-                    .font(.system(size: 24))
-            }).frame(width: 60, height: 60)
-                .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
-                .cornerRadius(30.0)
-                .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
-
+            Text("目標の進捗率によってご褒美を設定してモチベーションを保ちましょう")
+                    .font(.system(size: 18))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            ForEach(rewards.indices, id: \.self) { index in
+                HStack{
+                    Text("達成率")
+                    TextField("進捗率", text: Binding<String>(
+                        get: { String(self.rewards[index].progress) },
+                        set: { self.rewards[index].progress = Int($0) ?? 0 }
+                    ))
+                    .frame(width:30)
+                    Text("％")
+                        
+                    TextField("ご褒美名", text: $rewards[index].name)
+                }
+                .font(.system(size: 28))
+                .padding(.horizontal)
+            }
+            
+            HStack{
+                Spacer()
+                Button(action: {
+                    self.rewards.append(Reward(name: "", progress: 0))
+                }, label: {
+                    Image(systemName: "plus")
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                }).frame(width: 60, height: 60)
+                    .background(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0))
+                    .cornerRadius(30.0)
+                    .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
+            }
+            .padding()
             Button(action: {
                 // 新しいpost IDを生成
                 let postID = ref.child("posts").childByAutoId().key
@@ -339,6 +409,11 @@ struct FourthPage: View {
             }) {
                 Text("投稿")
             }
+            .padding(.vertical,10)
+                .padding(.horizontal,25)
+                .font(.headline)
+                .foregroundColor(.white)
+                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
                         
             Button(action: {
                 // 新しいpost IDを生成
@@ -373,6 +448,11 @@ struct FourthPage: View {
             }) {
                 Text("スキップ")
             }
+            .padding(.vertical,10)
+                .padding(.horizontal,25)
+                .font(.headline)
+                .foregroundColor(.white)
+                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
         }
         //.navigationTitle("ご褒美入力画面")
         .navigationBarBackButtonHidden(true)

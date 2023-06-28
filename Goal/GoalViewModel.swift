@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import Combine
 
 class GoalViewModel: ObservableObject {
     private var db = Database.database().reference()
@@ -25,6 +26,13 @@ class GoalViewModel: ObservableObject {
     @Published var intermediateGoals: [IntermediateGoal] = []
     @Published var rewards: [Reward] = []
     @Published var dataFetched = false
+//var cancellables = Set<AnyCancellable>()
+
+    struct Click: Identifiable {
+        let id = UUID()
+        var clickCount: Int
+        var clickDate: Date
+    }
 
     struct IntermediateGoal: Identifiable {
         let id = UUID()
@@ -41,11 +49,16 @@ class GoalViewModel: ObservableObject {
         var progress: Int
     }
     
-    struct Click: Identifiable {
-        let id = UUID()
-        var clickCount: Int
-        var clickDate: Date
+    struct ClickInfo {
+        var date: Date
+        var count: Int
     }
+    
+    enum FirebaseError: Error {
+        case userNotLoggedIn
+        case noDataAvailable
+    }
+
     
     func calculateProgressRate() {
         
@@ -127,7 +140,6 @@ class GoalViewModel: ObservableObject {
             calculateProgressRate()
         }
     }
-
 
     func fetchGoal() {
         guard let userID = Auth.auth().currentUser?.uid else {

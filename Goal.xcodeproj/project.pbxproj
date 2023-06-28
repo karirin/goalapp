@@ -19,6 +19,9 @@
 		26A5B3642A2F66AE007C958E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26A5B3632A2F66AE007C958E /* Assets.xcassets */; };
 		26A5B3672A2F66AE007C958E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26A5B3662A2F66AE007C958E /* Preview Assets.xcassets */; };
 		26A5B36E2A2F671F007C958E /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A5B36D2A2F671F007C958E /* CalendarView.swift */; };
+		26AC0A0F2A47F967003CF236 /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AC0A0E2A47F967003CF236 /* LineChart.swift */; };
+		26AC0A122A47FFBD003CF236 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 26AC0A112A47FFBD003CF236 /* SwiftUICharts */; };
+		26AC0A142A4804E8003CF236 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AC0A132A4804E7003CF236 /* TestView.swift */; };
 		26BF4A502A31A2E6004E3CBC /* GoalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */; };
 		26BF4A522A31F764004E3CBC /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BF4A512A31F764004E3CBC /* AuthManager.swift */; };
 		43C0BB8073CE9EB4A3CC5E90 /* Pods_Goal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30D914CFAFFBD63EE7DB68E1 /* Pods_Goal.framework */; };
@@ -38,6 +41,8 @@
 		26A5B3632A2F66AE007C958E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		26A5B3662A2F66AE007C958E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		26A5B36D2A2F671F007C958E /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		26AC0A0E2A47F967003CF236 /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
+		26AC0A132A4804E7003CF236 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewModel.swift; sourceTree = "<group>"; };
 		26BF4A512A31F764004E3CBC /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		30D914CFAFFBD63EE7DB68E1 /* Pods_Goal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Goal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +56,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43C0BB8073CE9EB4A3CC5E90 /* Pods_Goal.framework in Frameworks */,
+				26AC0A122A47FFBD003CF236 /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,10 +85,12 @@
 			isa = PBXGroup;
 			children = (
 				26A5B35F2A2F66AD007C958E /* GoalApp.swift */,
+				26AC0A0E2A47F967003CF236 /* LineChart.swift */,
 				26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */,
 				26A5B3612A2F66AD007C958E /* ContentView.swift */,
 				263996442A367E9700E03508 /* RewardsView.swift */,
 				26A2F5F12A30C79B003AA1D7 /* PostView.swift */,
+				26AC0A132A4804E7003CF236 /* TestView.swift */,
 				2639963C2A342BD400E03508 /* TopView.swift */,
 				2639963E2A342C9000E03508 /* SettingView.swift */,
 				263996402A342CC500E03508 /* PrivacyView.swift */,
@@ -139,6 +147,9 @@
 			dependencies = (
 			);
 			name = Goal;
+			packageProductDependencies = (
+				26AC0A112A47FFBD003CF236 /* SwiftUICharts */,
+			);
 			productName = Goal;
 			productReference = 26A5B35C2A2F66AD007C958E /* Goal.app */;
 			productType = "com.apple.product-type.application";
@@ -167,6 +178,9 @@
 				Base,
 			);
 			mainGroup = 26A5B3532A2F66AD007C958E;
+			packageReferences = (
+				26AC0A102A47FFBD003CF236 /* XCRemoteSwiftPackageReference "ChartView" */,
+			);
 			productRefGroup = 26A5B35D2A2F66AD007C958E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -247,6 +261,8 @@
 				2639963F2A342C9000E03508 /* SettingView.swift in Sources */,
 				26BF4A502A31A2E6004E3CBC /* GoalViewModel.swift in Sources */,
 				26BF4A522A31F764004E3CBC /* AuthManager.swift in Sources */,
+				26AC0A142A4804E8003CF236 /* TestView.swift in Sources */,
+				26AC0A0F2A47F967003CF236 /* LineChart.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,6 +467,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26AC0A102A47FFBD003CF236 /* XCRemoteSwiftPackageReference "ChartView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppPear/ChartView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		26AC0A112A47FFBD003CF236 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26AC0A102A47FFBD003CF236 /* XCRemoteSwiftPackageReference "ChartView" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 26A5B3542A2F66AD007C958E /* Project object */;
 }

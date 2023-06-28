@@ -1,4 +1,8 @@
 PODS:
+  - Charts (4.1.0):
+    - Charts/Core (= 4.1.0)
+  - Charts/Core (4.1.0):
+    - SwiftAlgorithms (~> 1.0)
   - Firebase/Auth (10.10.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 10.10.0)
@@ -42,14 +46,17 @@ PODS:
   - GTMSessionFetcher/Core (3.1.1)
   - leveldb-library (1.22.2)
   - PromisesObjC (2.2.0)
+  - SwiftAlgorithms (1.0.0)
 
 DEPENDENCIES:
+  - Charts
   - Firebase/Auth
   - Firebase/Database
   - FSCalendar
 
 SPEC REPOS:
   trunk:
+    - Charts
     - Firebase
     - FirebaseAppCheckInterop
     - FirebaseAuth
@@ -61,8 +68,10 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - PromisesObjC
+    - SwiftAlgorithms
 
 SPEC CHECKSUMS:
+  Charts: 354f86803d11d9c35de280587fef50d1af063978
   Firebase: facd334e557a979bd03a0b58d90fd56b52b8aba0
   FirebaseAppCheckInterop: 7d3521f56872cf74a01792c0a095a30e054ff6ae
   FirebaseAuth: 5ddbe23ebc4e647469261f5c59cd12a04f37c8e6
@@ -74,7 +83,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: e8647203b65cee28c5f73d0f473d096653945e72
   leveldb-library: f03246171cce0484482ec291f88b6d563699ee06
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
+  SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
 
-PODFILE CHECKSUM: 3666597294903a353f31f7ebd6128e04bf7303fe
+PODFILE CHECKSUM: 76ddef8a50c2d2a1999d3d99d8511113537adfa3
 
 COCOAPODS: 1.12.1
