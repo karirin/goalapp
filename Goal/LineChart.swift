@@ -34,15 +34,18 @@ struct LineChart : UIViewRepresentable {
             lineChartView.data!.setDrawValues(true) //データの値表示（falseに設定すると非表示）
             lineChartView.rightAxis.enabled = false //右側のX軸非表示
             lineChartView.animate(xAxisDuration: 2.5) //表示の際のアニメーション効果（この場合はX軸方法で2.5秒）
-        lineChartView.data!.setValueFont(.systemFont(ofSize: 20, weight: .light)) //データのフォントサイズとウエイトの変更
+            lineChartView.data!.setValueFont(.systemFont(ofSize: 20, weight: .light)) //データのフォントサイズとウエイトの変更
 
-            //Y軸表示の設定
-            let yAxis = lineChartView.leftAxis // lineChartView.leftAxisを変数で定義
-            yAxis.labelFont = .boldSystemFont(ofSize: 12) //Y軸単位のフォントサイズ
-            yAxis.setLabelCount(10, force: true) //Y軸の表示罫線数（falseにすると指定無し）
-            yAxis.labelTextColor = .white //Y軸単位のテキストカラー
-            yAxis.axisLineColor = .white //Y軸単位の軸のカラー
-            yAxis.labelPosition = .outsideChart //Y軸単位のポジション(.insideChartにすると内側で表示)
+        let yAxis = lineChartView.leftAxis
+        yAxis.drawLabelsEnabled = true  // これによりY軸のラベルが表示されます
+        yAxis.labelFont = .boldSystemFont(ofSize: 12)
+        yAxis.setLabelCount(10, force: true)
+        //yAxis.labelTextColor = .white
+        //yAxis.axisLineColor = .white
+        yAxis.labelPosition = .outsideChart
+        //yAxis.axisMinimum = 0.0  // y軸の最小値
+        //yAxis.axisMaximum = 100.0  // y軸の最大値
+
             
         // X軸表示の設定
         let xAxis = lineChartView.xAxis // lineChartView.xAxisを変数で定義
@@ -54,12 +57,28 @@ struct LineChart : UIViewRepresentable {
         //日付のフォーマットを設定します
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd"
-        
+
         //基準日を設定します
-        guard let baseDate = dateFormatter.date(from: "06/01") else {
+        guard let baseDate = dateFormatter.date(from: "\(viewModel.selectedMonth)/01") else {
             return lineChartView
         }
-        
+        print(baseDate)
+
+        //終了日を設定します
+        guard let endDate = dateFormatter.date(from: "\(viewModel.selectedMonth)/30") else {
+            return lineChartView
+        }
+        print(endDate)
+
+
+        //基準日からの最小値と最大値を算出します
+        let minimumValue = 0.0
+        let maximumValue = endDate.timeIntervalSince(baseDate) / (60 * 60 * 24)
+
+        //X軸の最小値と最大値を設定します
+        xAxis.axisMinimum = minimumValue
+        xAxis.axisMaximum = maximumValue
+
         //ValueFormatterを作成し、数値を日付に変換します
         xAxis.valueFormatter = DefaultAxisValueFormatter(block: { (value, axis) in
             let date = Date(timeIntervalSinceReferenceDate: value * 60 * 60 * 24 + baseDate.timeIntervalSinceReferenceDate)
@@ -76,24 +95,36 @@ struct LineChart : UIViewRepresentable {
     func setData() -> LineChartData {
         var dataSets: [LineChartDataSet] = []
         let colors: [NSUIColor] = [.red, .blue, .green, .orange, .purple, .cyan] // 線ごとの色設定
+        var maxValue: Double = 0.0 // 最大値を格納する変数を追加
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
         //基準日（グラフの最初の日）を設定します
-        guard let baseDate = dateFormatter.date(from: "2023-06-01") else {
+        guard let baseDate = dateFormatter.date(from: "2023-\(viewModel.selectedMonth)-01") else {
             return LineChartData() // 基準日の設定が失敗した場合は空のデータを返します
         }
+        //print(baseDate)
+
+        //終了日を設定します
+        guard let endDate = dateFormatter.date(from: "2023-\(viewModel.selectedMonth)-30") else {
+            return LineChartData() // 終了日の設定が失敗した場合は空のデータを返します
+        }
+        //print(endDate)
 
         for (index, intermediateGoal) in viewModel.intermediateGoals.enumerated() {
             var dataPoints: [ChartDataEntry] = []
-            
+                
             // intermediateGoal.clicksを日付順にソートします
             let sortedClicks = intermediateGoal.clicks.sorted(by: { $0.clickDate < $1.clickDate })
-            
+                
             for click in sortedClicks {
-                let date = dateFormatter.string(from: click.clickDate)
                 let value = Double(click.clickCount)
+                
+                // 最大値を更新
+                if value > maxValue {
+                    maxValue = value
+                }
 
                 //基準日からの経過日数を算出します
                 let elapsedTime = click.clickDate.timeIntervalSince(baseDate) / (60 * 60 * 24)
@@ -109,6 +140,10 @@ struct LineChart : UIViewRepresentable {
             set.setColor(colors[index % colors.count]) // 線の色の指定
             set.fillAlpha = 0.5 // 塗りつぶし色の不透明度指定
             set.drawFilledEnabled = false // 値の塗りつぶし表示
+            set.drawValuesEnabled = false
+            //set.drawCirclesEnabled = true // 各データを丸記号で表示
+            set.circleRadius = 5.0 // 丸の半径を5.0に設定
+            set.circleColors = [.black] // 丸の色を青に設定
             dataSets.append(set)
         }
 
@@ -144,17 +179,40 @@ struct LineChart : UIViewRepresentable {
 struct ChartView: View {
     @ObservedObject var viewModel = GoalViewModel()
 
+    var months: [String] = (1...12).map { String(format: "%02d", $0) }
     var body: some View {
-        LineChart(viewModel: viewModel)
-            .onAppear {
-                viewModel.fetchGoal()
+        VStack {
+            Picker("Select Month", selection: $viewModel.selectedMonth) {
+                ForEach(months, id: \.self) { month in
+                    Text(month).tag(month)
+                }
             }
+            .pickerStyle(MenuPickerStyle())
+
+            LineChart(viewModel: viewModel)
+                .frame(maxWidth:.infinity, maxHeight: 200)
+                .onAppear {
+                    viewModel.fetchGoal()
+                }
+            HStack{
+                ForEach(viewModel.intermediateGoals, id: \.id) { goal in
+                    VStack {
+                        Text(goal.goal)
+                        CircularProgressView(progress: Double(goal.progress), total: Double(goal.value))
+                            .frame(width: 100, height: 100)
+                    }
+                    .padding()
+                }
+            }
+        }
     }
 }
+
 
 struct LineChart_Previews: PreviewProvider {
     static var previews: some View {
         ChartView()
-            .frame(height:300)
+            //.frame(height:300)
+        
     }
 }

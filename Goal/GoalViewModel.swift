@@ -26,6 +26,7 @@ class GoalViewModel: ObservableObject {
     @Published var intermediateGoals: [IntermediateGoal] = []
     @Published var rewards: [Reward] = []
     @Published var dataFetched = false
+    @Published var selectedMonth: String = "06"
 //var cancellables = Set<AnyCancellable>()
 
     struct Click: Identifiable {
