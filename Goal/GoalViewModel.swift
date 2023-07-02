@@ -26,8 +26,16 @@ class GoalViewModel: ObservableObject {
     @Published var intermediateGoals: [IntermediateGoal] = []
     @Published var rewards: [Reward] = []
     @Published var dataFetched = false
-    @Published var selectedMonth: String = "06"
+    @Published var selectedYear = ""
+    @Published var selectedMonth = ""
 //var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        let date = Date()
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        selectedYear = String(components.year ?? 2023)  // 現在の年
+        selectedMonth = String(format: "%02d", components.month ?? 1)  // 現在の月（1桁の場合は0でパディング）
+    }
 
     struct Click: Identifiable {
         let id = UUID()
@@ -142,7 +150,7 @@ class GoalViewModel: ObservableObject {
         }
     }
 
-    func fetchGoal() {
+    func fetchGoal(completion: @escaping () -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
             return
         }
@@ -195,7 +203,6 @@ class GoalViewModel: ObservableObject {
                         }
                     }
 
-
                     self.rewards = []
 
                     if let rewards = postData["rewards"] as? [[String: AnyObject]] {
@@ -234,6 +241,7 @@ class GoalViewModel: ObservableObject {
                 }
             }
         }
+        completion()
     }
     
     func intermediateGoalsAndClickCounts(on date: Date) -> [(IntermediateGoal, Int)] {

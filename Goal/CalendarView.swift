@@ -27,11 +27,7 @@ struct CalendarUIView: UIViewRepresentable {
         fsCalendar.scrollDirection = .vertical //スクロールの方向
         fsCalendar.scope = .month //表示の単位（週単位 or 月単位）
         fsCalendar.locale = Locale(identifier: "en") //表示の言語の設置（日本語表示の場合は"ja"）
-        //ヘッダー
-        fsCalendar.appearance.headerTitleFont = UIFont.systemFont(ofSize: 20) //ヘッダーテキストサイズ
-        fsCalendar.appearance.headerDateFormat = "yyyy/MM" //ヘッダー表示のフォーマット
-        fsCalendar.appearance.headerTitleColor = UIColor.label //ヘッダーテキストカラー
-        fsCalendar.appearance.headerMinimumDissolvedAlpha = 0 //前月、翌月表示のアルファ量（0で非表示）
+
         //曜日表示
         fsCalendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 20) //曜日表示のテキストサイズ
         fsCalendar.appearance.weekdayTextColor = .darkGray //曜日表示のテキストカラー
@@ -50,6 +46,7 @@ struct CalendarUIView: UIViewRepresentable {
         
         fsCalendar.appearance.subtitleOffset = CGPoint(x: 0, y: 10)  // Adjust the position of subtitle label
             fsCalendar.appearance.eventOffset = CGPoint(x: 0, y: -10)  // Adjust the position of event dot
+        fsCalendar.headerHeight = 0  // ヘッダーの高さを0に設定
         
         return fsCalendar
     }
@@ -121,6 +118,13 @@ struct CalendarUIView: UIViewRepresentable {
             }
             return nil // 他の日付はデフォルトの色に
         }
+        
+        func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+            let currentPageDate = calendar.currentPage
+            let components = Calendar.current.dateComponents([.year, .month], from: currentPageDate)
+            viewModel.selectedYear = String(components.year ?? 2023)  // Update selectedYear in viewModel
+            viewModel.selectedMonth = String(format: "%02d", components.month ?? 1)  // Update selectedMonth in viewModel
+        }
 
     }
 }
@@ -132,8 +136,19 @@ struct CalendarTestView: View {
     
     var body: some View {
         VStack{
+            HStack{
+                Text("")
+                Spacer()
+                Text("\(viewModel.selectedYear)年\(viewModel.selectedMonth)月")
+                    .fontWeight(.bold) // <- Change this line
+                Spacer()
+                Text("")
+            }
+            .padding()
+            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
+            .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
             CalendarUIView(selectedDate: $selectedDate, viewModel: viewModel, refresh: $viewModel.refresh) // Pass refresh binding to the CalendarUIView
-                .frame(height: 500)
+                .frame(height: 450)
             ScrollView {
                 VStack{
                     ForEach(selectedGoalsAndClicks, id: \.0.id) { goal, clickCount in
@@ -144,12 +159,14 @@ struct CalendarTestView: View {
                         }
                         .font(.system(size: 20))
                         .padding(.horizontal)
-                        .padding(.vertical,5)
+                        .padding(.bottom,5)
                     }
                 }.frame(height: 100)
             }
         }.onAppear {
-            viewModel.fetchGoal() // Fetch data when view appears
+            viewModel.fetchGoal() {
+                
+            }// Fetch data when view appears
         }.onChange(of: selectedDate) { newDate in
             selectedGoalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: newDate)
         }

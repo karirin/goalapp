@@ -15,20 +15,6 @@ struct TopView: View {
     
     var body: some View {
         VStack {
-            if selectedTab != 3 {
-                HStack{
-                    Text("")
-                    Spacer()
-                    Text(tabTitle)
-                        .fontWeight(.bold) // <- Change this line
-                    Spacer()
-                    Text("")
-                }
-                .padding()
-                .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
-                .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
-                .frame(height: 40)
-            }
             TabView(selection: $selectedTab) {  // <- Add "selection: $selectedTab"
                 ContentView()
                     .tag(0)  // <- Add this line
@@ -48,8 +34,14 @@ struct TopView: View {
                         Image(systemName: "gift")
                         Text("ご褒美")
                     }
-                SettingsView()
+                ChartView()
                     .tag(3)  // <- Add this line
+                    .tabItem {
+                        Image(systemName: "chart.xyaxis.line")
+                        Text("グラフ")
+                    }
+                SettingsView()
+                    .tag(4)  // <- Add this line
                     .tabItem {
                         Image(systemName: "gearshape.fill")
                         Text("設定")
