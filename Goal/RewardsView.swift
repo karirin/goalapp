@@ -23,8 +23,9 @@ struct RewardsView: View {
                 Text("")
             }
             .padding()
-            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
-            .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
+            .foregroundColor(.white)
+            .frame(height:30)
             ScrollView {
                 VStack {
                     ForEach(viewModel.rewards) { reward in

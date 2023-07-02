@@ -28,20 +28,20 @@ struct TopView: View {
                         Image(systemName: "calendar")
                         Text("カレンダー")
                     }
-                RewardsView()
-                    .tag(2)  // <- Add this line
-                    .tabItem {
-                        Image(systemName: "gift")
-                        Text("ご褒美")
-                    }
                 ChartView()
-                    .tag(3)  // <- Add this line
+                    .tag(2)  // <- Add this line
                     .tabItem {
                         Image(systemName: "chart.xyaxis.line")
                         Text("グラフ")
                     }
+                RewardsView()
+                    .tag(3)
+                    .tabItem {
+                        Image(systemName: "gift")
+                        Text("ご褒美")
+                    }
                 SettingsView()
-                    .tag(4)  // <- Add this line
+                    .tag(4)
                     .tabItem {
                         Image(systemName: "gearshape.fill")
                         Text("設定")
@@ -49,17 +49,7 @@ struct TopView: View {
             }
         }
     }
-    
-    var tabTitle: String {
-        switch selectedTab {
-        case 0: return "目標"
-        case 1: return "カレンダー"
-        case 2: return "ご褒美"
-        default: return ""
-        }
-    }
 }
-
 
 struct TopView_Previews: PreviewProvider {
     static var previews: some View {

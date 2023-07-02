@@ -134,6 +134,12 @@ struct CalendarTestView: View {
     @StateObject var viewModel = GoalViewModel()
     @State var selectedGoalsAndClicks: [(GoalViewModel.IntermediateGoal, Int)] = []
     
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年MM月dd日"
+        return formatter
+    }()
+    
     var body: some View {
         VStack{
             HStack{
@@ -145,14 +151,28 @@ struct CalendarTestView: View {
                 Text("")
             }
             .padding()
-            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
-            .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
+            //.foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+            .foregroundColor(.white)
+            .frame(height:30)
             CalendarUIView(selectedDate: $selectedDate, viewModel: viewModel, refresh: $viewModel.refresh) // Pass refresh binding to the CalendarUIView
-                .frame(height: 450)
+                .frame(height: 400)
+                .padding(.top)
             ScrollView {
                 VStack{
+                    HStack{
+                        Text("\(selectedDate, formatter: dateFormatter)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    Spacer()
+                    }
+                    .padding(.leading,15)
+                    .padding(.bottom,5)
                     ForEach(selectedGoalsAndClicks, id: \.0.id) { goal, clickCount in
                         HStack{
+                            Text(" ")
+                                .frame(width:5,height: 20)
+                                .background(Color(red: 0.99, green: 0.4, blue: 0.4, opacity: 1.0))
                             Text("\(goal.goal)")
                             Spacer()
                             Text("\(clickCount) \(goal.unit)")
@@ -161,6 +181,7 @@ struct CalendarTestView: View {
                         .padding(.horizontal)
                         .padding(.bottom,5)
                     }
+                    Spacer()
                 }.frame(height: 100)
             }
         }.onAppear {

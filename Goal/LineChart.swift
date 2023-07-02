@@ -201,14 +201,8 @@ struct ChartView: View {
             HStack{
                 Text("")
                 Spacer()
-                Text("\(viewModel.selectedYear)")
+                Text("\(viewModel.selectedYear)年\(viewModel.selectedMonth)月")
                     .onReceive(viewModel.$selectedYear) { _ in // selectedYearが変わるたびに呼ばれる
-                        viewModel.fetchGoal(){
-                            
-                        }
-                    }
-                Text("\(viewModel.selectedMonth)")
-                    .onReceive(viewModel.$selectedMonth) { _ in // selectedYearが変わるたびに呼ばれる
                         viewModel.fetchGoal(){
                             
                         }
@@ -217,9 +211,10 @@ struct ChartView: View {
                 Text("")
             }
             .padding()
-            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
-            .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
-            .frame(maxWidth:.infinity)
+            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
+            .foregroundColor(.white)
+            .frame(height:20)
+            .fontWeight(.bold)
             VStack {
                 // 必要に応じて条件を設けてチャートを描画する
                 
@@ -239,17 +234,19 @@ struct ChartView: View {
                 }
                 Spacer()
             }
-            .gesture(
-                DragGesture()
-                    .onEnded { value in
-                        if value.translation.width > 20 { // 右方向にスワイプ
-                            viewModel.selectedMonth = String(format: "%02d", (Int(viewModel.selectedMonth) ?? 1) - 1)
-                        } else if value.translation.width < -20 { // 左方向にスワイプ
-                            viewModel.selectedMonth = String(format: "%02d", (Int(viewModel.selectedMonth) ?? 1) + 1)
-                        }
-                    }
-            )
+            .padding(.top)
+            .padding(.horizontal,5)
         }
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width > 20 { // 右方向にスワイプ
+                        viewModel.selectedMonth = String(format: "%02d", (Int(viewModel.selectedMonth) ?? 1) - 1)
+                    } else if value.translation.width < -20 { // 左方向にスワイプ
+                        viewModel.selectedMonth = String(format: "%02d", (Int(viewModel.selectedMonth) ?? 1) + 1)
+                    }
+                }
+        )
     }
 }
 

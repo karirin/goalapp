@@ -24,7 +24,7 @@ struct ProgressRingView: View {
                 Text("")
             }
             .padding()
-            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.2))
+            .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
             VStack {
                 //.frame(height: 40)
