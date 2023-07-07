@@ -36,26 +36,26 @@ class GoalViewModel: ObservableObject {
         selectedYear = String(components.year ?? 2023)  // 現在の年
         selectedMonth = String(format: "%02d", components.month ?? 1)  // 現在の月（1桁の場合は0でパディング）
     }
-
-    struct Click: Identifiable {
-        let id = UUID()
-        var clickCount: Int
-        var clickDate: Date
-    }
-
-    struct IntermediateGoal: Identifiable {
-        let id = UUID()
-        var goal: String
-        var progress: Int
-        var unit: String
-        var value: Int
-        var clicks: [Click] // Add this line
-    }
     
     struct Reward: Identifiable {
         let id = UUID()
         var name: String
         var progress: Int
+    }
+
+    struct Click: Equatable, Hashable {
+        let id = UUID()
+        var clickCount: Int
+        var clickDate: Date
+    }
+
+    struct IntermediateGoal: Identifiable, Hashable {
+        let id = UUID()
+        var goal: String
+        var progress: Int
+        var unit: String
+        var value: Int
+        var clicks: [Click] // `Click` is now `Hashable`
     }
     
     struct ClickInfo {
@@ -68,7 +68,6 @@ class GoalViewModel: ObservableObject {
         case noDataAvailable
     }
 
-    
     func calculateProgressRate() {
         
         guard !intermediateGoals.isEmpty else { return }
@@ -201,6 +200,8 @@ class GoalViewModel: ObservableObject {
                                 }
                             }
                         }
+                    } else {
+                        print("Failed to parse intermediate_goal: \(postData["intermediate_goal"] ?? "nil")")
                     }
 
                     self.rewards = []
@@ -238,11 +239,42 @@ class GoalViewModel: ObservableObject {
                         // Set refresh to true after fetching data
                         self.refresh = true
                     }
+                    DispatchQueue.main.async {
+                        completion()
+                    }
                 }
             }
         }
-        completion()
     }
+    
+    func calculateRewardProgressRate() -> Double {
+        // Step 1: Calculate the total progress of all intermediate goals
+        var totalProgress = 0.0
+        for intermediateGoal in intermediateGoals {
+            totalProgress += Double(intermediateGoal.progress) / Double(intermediateGoal.value)
+            print("totalProgress:\(totalProgress)")
+        }
+
+        // Step 2: Calculate the total target progress of all rewards
+        var totalTargetProgress = 0.0
+        for reward in rewards {
+            totalTargetProgress += Double(reward.progress)
+            print("totalTargetProgress:\(totalTargetProgress)")
+        }
+
+        // If totalTargetProgress is 0, return 0.0 to avoid division by 0
+        if totalTargetProgress == 0.0 {
+            return 0.0
+        }
+
+        // Calculate the reward progress rate
+        let rewardProgressRate = totalProgress / totalTargetProgress * 100
+        print("rewardProgressRate:\(rewardProgressRate)")
+
+        // Return the reward progress rate
+        return rewardProgressRate
+    }
+
     
     func intermediateGoalsAndClickCounts(on date: Date) -> [(IntermediateGoal, Int)] {
         let dateFormatter = DateFormatter()
@@ -255,7 +287,6 @@ class GoalViewModel: ObservableObject {
             var clickCount = 0
             for click in intermediateGoal.clicks {
                 let clickDateString = dateFormatter.string(from: click.clickDate)
-               print("clickDateString:\(clickDateString)")
                 if clickDateString == dateString {
                     clickCount += click.clickCount
                 }
@@ -287,5 +318,25 @@ class GoalViewModel: ObservableObject {
         }
 
         return totalClickCount
+    }
+}
+
+// `Reward`の`extension`を`GoalViewModel`の外部に移動
+extension GoalViewModel.Reward {
+    func progressRate(for intermediateGoals: [GoalViewModel.IntermediateGoal]) -> Int {
+        var totalProgress = 0.0
+        
+        for intermediateGoal in intermediateGoals {
+            totalProgress += Double(intermediateGoal.progress) / Double(intermediateGoal.value)
+        }
+
+        let progress_rate = totalProgress / Double(intermediateGoals.count) * 100
+        
+        // Calculate the reward's progress rate and convert it to an Int
+        let rewardProgressRate = Int(progress_rate / Double(self.progress) * 100)
+
+        print("rewardProgressRate:\(rewardProgressRate)")
+        
+        return rewardProgressRate
     }
 }

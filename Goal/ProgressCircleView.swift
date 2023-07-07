@@ -20,9 +20,11 @@ struct CircularProgressView: View {
             Circle()
                 .trim(from: 0.0, to: CGFloat(min(self.progress / self.total, 1.0)))
                 .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.blue)
+                //.foregroundColor(.blue)
+                .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 1))
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear)
+                
             
             Text(String(format: "%.0f %%", min(self.progress / self.total, 1.0)*100.0))
                 .font(.title)

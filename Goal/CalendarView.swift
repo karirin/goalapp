@@ -15,9 +15,7 @@ struct CalendarUIView: UIViewRepresentable {
     @Binding var refresh: Bool  // Add this line
     
     func makeUIView(context: Context) -> UIView {
-        
         typealias UIViewType = FSCalendar
-        
         let fsCalendar = FSCalendar()
         
         fsCalendar.delegate = context.coordinator
@@ -27,7 +25,6 @@ struct CalendarUIView: UIViewRepresentable {
         fsCalendar.scrollDirection = .vertical //スクロールの方向
         fsCalendar.scope = .month //表示の単位（週単位 or 月単位）
         fsCalendar.locale = Locale(identifier: "en") //表示の言語の設置（日本語表示の場合は"ja"）
-
         //曜日表示
         fsCalendar.appearance.weekdayFont = UIFont.systemFont(ofSize: 20) //曜日表示のテキストサイズ
         fsCalendar.appearance.weekdayTextColor = .darkGray //曜日表示のテキストカラー
@@ -88,7 +85,9 @@ struct CalendarUIView: UIViewRepresentable {
         }
         
         func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-            parent.selectedDate = date
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.parent.selectedDate = date
+            }
         }
         
         func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
@@ -164,7 +163,7 @@ struct CalendarTestView: View {
                         Text("\(selectedDate, formatter: dateFormatter)")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                    Spacer()
+                        Spacer()
                     }
                     .padding(.leading,15)
                     .padding(.bottom,5)
@@ -182,13 +181,16 @@ struct CalendarTestView: View {
                         .padding(.bottom,5)
                     }
                     Spacer()
-                }.frame(height: 100)
+                }.frame(height: 200)
             }
         }.onAppear {
             viewModel.fetchGoal() {
-                
-            }// Fetch data when view appears
-        }.onChange(of: selectedDate) { newDate in
+                // Fetch data when view appears
+            }
+            let goalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: Date())
+            selectedGoalsAndClicks = goalsAndClicks
+        }
+        .onChange(of: selectedDate) { newDate in
             selectedGoalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: newDate)
         }
         .background(Color(red: 0.99, green: 0.99, blue: 0.99, opacity: 1.0))

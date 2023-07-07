@@ -8,6 +8,14 @@
 import SwiftUI
 import Charts
 
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
+    }
+}
+
 class DateValueFormatter: AxisValueFormatter {
     let dateFormatter = DateFormatter()
     
@@ -196,7 +204,9 @@ struct ChartView: View {
     var years: [String] = Array(2000...2030).map { String($0) }
     var months: [String] = (1...12).map { String(format: "%02d", $0) }
 
+
     var body: some View {
+        let groupedGoals = viewModel.intermediateGoals.chunked(into: 2)
         VStack{
             HStack{
                 Text("")
@@ -217,24 +227,50 @@ struct ChartView: View {
             .fontWeight(.bold)
             VStack {
                 // 必要に応じて条件を設けてチャートを描画する
-                
                 if !viewModel.intermediateGoals.isEmpty {
+                    HStack{
+                        Image(systemName: "chart.line.uptrend.xyaxis.circle")
+                            .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 1))
+                        Text("中間目標の進捗推移")
+                        Spacer()
+                    }
+                    .font(.system(size: 25))
+                    .padding(.bottom,-1)
+                    .padding(.horizontal,5)
                     LineChart(viewModel: viewModel)
                         .frame(maxWidth:.infinity, maxHeight: 200)
                 }
                 HStack{
-                    ForEach(viewModel.intermediateGoals, id: \.id) { goal in
-                        VStack {
-                            Text(goal.goal)
-                            CircularProgressView(progress: Double(goal.progress), total: Double(goal.value))
-                                .frame(width: 100, height: 100)
+                    Image(systemName: "chart.pie")
+                        .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 1))
+                    Text("中間目標の進捗率")
+                    Spacer()
+                }
+                .font(.system(size: 25))
+                .padding(.bottom,-1)
+                .padding(.horizontal,5)
+                .padding(.top)
+                ScrollView{
+                    VStack {
+                        ForEach(groupedGoals, id: \.self) { goalPair in
+                            HStack {
+                                ForEach(goalPair) { goal in
+                                    VStack {
+                                        Text(goal.goal)
+                                        CircularProgressView(progress: Double(goal.progress), total: Double(goal.value))
+                                            .frame(width: 100, height: 100)
+                                    }
+                                    .padding()
+                                    .padding(.horizontal,5)
+                                }
+                            }
                         }
-                        .padding()
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 Spacer()
             }
-            .padding(.top)
+            .padding(.top,30)
             .padding(.horizontal,5)
         }
         .gesture(

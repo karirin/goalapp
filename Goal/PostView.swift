@@ -95,7 +95,7 @@ struct RootView: View {
     
     var body: some View {
         VStack {
-            ProgressBar(value: $router.progress)
+            //ProgressBar(value: $router.progress)
             switch router.currentPage {
             case .first:
                 FirstPage()
@@ -140,21 +140,24 @@ struct FirstPage: View {
                     .padding()
 
                 NavigationLink(destination: SecondPage(goal: $goal)) {
-                    Text("次へ")
+                     Text("次へ")
                 }
+                .disabled(goal.isEmpty)  // 追加: 目標が空の場合、ボタンを無効化します
                 .padding(.vertical,10)
                 .padding(.horizontal,25)
                 .font(.headline)
                 .foregroundColor(.white)
-                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .background(RoundedRectangle(cornerRadius: 25)
+                    .fill(goal.isEmpty ? Color.gray : Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .opacity(goal.isEmpty ? 0.5 : 1.0)
                 .onAppear(perform: {
-                    router.updateProgress()
+                     router.updateProgress()
                 })
                 .padding()
-            }
-        }
-    }
-}
+             }
+         }
+     }
+ }
 
 struct SecondPage: View {
     @Binding var goal: String
@@ -199,7 +202,8 @@ struct SecondPage: View {
             }.frame(width:50)
             NavigationLink(destination: ThirdPage(goal: $goal, date: $date)) {
                 Text("次へ")
-            }.padding(.vertical,10)
+            }
+            .padding(.vertical,10)
                 .padding(.horizontal,25)
                 .font(.headline)
                 .foregroundColor(.white)
@@ -239,6 +243,20 @@ struct ThirdPage: View {
         }
     }
     
+    // 無効なマイルストーンをチェックするためのプロパティを追加
+    private var isMilestoneValid: Bool {
+        for milestone in milestones {
+            if milestone.goal.isEmpty || milestone.value <= 0 || milestone.unit.isEmpty {
+                return false
+            }
+        }
+        return true
+    }
+    
+    private func deleteMilestones(at offsets: IndexSet) {
+        milestones.remove(atOffsets: offsets)
+    }
+    
     init(goal: Binding<String>, date: Binding<Date>) {
         _goal = goal
         _date = date
@@ -271,7 +289,21 @@ struct ThirdPage: View {
                         .font(.system(size: 22))
                 }.padding()
             }
+            .onDelete(perform: deleteMilestones)
             HStack{
+                Button(action: {
+                    if milestones.count > 1 { // マイルストーンが1つ以上の場合にのみ削除を実行
+                        milestones.removeLast()
+                    }
+                }) {
+                    Image(systemName: "minus")
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                }
+                .frame(width: 60, height: 60)
+                .background(milestones.count > 1 ? Color.red : Color.gray)
+                .cornerRadius(30.0)
+                .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
                 Spacer()
                 Button(action: {
                     self.milestones.append(Milestone(goal: "", value: 0, unit: ""))
@@ -288,11 +320,14 @@ struct ThirdPage: View {
 
             NavigationLink(destination: FourthPage(goal: $goal, date: $date, milestones: $milestones)) {
                 Text("次へ")
-            }.padding(.vertical,10)
+            }
+            .disabled(!isMilestoneValid)
+            .padding(.vertical,10)
                 .padding(.horizontal,25)
                 .font(.headline)
                 .foregroundColor(.white)
-                .background(RoundedRectangle(cornerRadius: 25).fill(Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .background(RoundedRectangle(cornerRadius: 25).fill(!isMilestoneValid ? Color.gray : Color(red: 1.0, green: 0.68, blue: 0.6, opacity: 1.0)))
+                .opacity(!isMilestoneValid ? 0.5 : 1.0)
         }
         //.navigationTitle("中間目標入力画面")
         .navigationBarBackButtonHidden(true)

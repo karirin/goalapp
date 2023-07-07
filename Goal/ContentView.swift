@@ -12,6 +12,17 @@ struct ProgressRingView: View {
     var goal: String
     var intermediate_goals: [GoalViewModel.IntermediateGoal]
     var updateProgressInFirebase: (Int, Int, Date, Bool) -> Void
+    @State private var showingAlert = false
+    @State private var showingIntermediateAlert = false  // Add this line
+
+    func checkIntermediateGoals() {  // Modify this function
+        for goal in intermediate_goals {
+            if goal.progress + 1 == goal.value {  // Change "== goal.value" to "== goal.value - 1"
+                showingIntermediateAlert = true
+                break
+            }
+        }
+    }
 
     var body: some View {
         VStack{
@@ -25,7 +36,7 @@ struct ProgressRingView: View {
             }
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
-            .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+            .foregroundColor(.white)
             VStack {
                 //.frame(height: 40)
                 ZStack {
@@ -50,13 +61,21 @@ struct ProgressRingView: View {
                         Text("\(Int(progress * 100))%")
                             .font(.system(size: 40))
                             .fontWeight(.bold)
+                            .onChange(of: progress) { newValue in
+                                if newValue == 1.0 {
+                                    showingAlert = true
+                                }
+                            }
+                            .alert(isPresented: $showingAlert) {
+                                Alert(title: Text("目標達成"), message: Text("おめでとうございます！目標達成です！"), dismissButton: .default(Text("OK")))
+                            }
                     }
                 }
                 
-                ScrollView { // Add this
+                ScrollView {
                     VStack {
                         ForEach(0..<intermediate_goals.count, id: \.self) { index in
-                            let intermediate_goal = intermediate_goals[index]
+                                                let intermediate_goal = intermediate_goals[index]
                             HStack{
                                 Text(intermediate_goal.goal)
                                     .font(.system(size: 24))
@@ -67,7 +86,7 @@ struct ProgressRingView: View {
                             .padding(.leading)
                             HStack{
                                 Button(action: {
-                                    let currentDate = Date()  // Get current date
+                                    let currentDate = Date()
                                     guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
                                     //print("Next day: \(nextDay)")
                                     updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate, false) // Remove isProgressIncreased label
@@ -95,13 +114,17 @@ struct ProgressRingView: View {
                                     //print("currentDate:\(currentDate)")
                                     //guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
                                     //print("Next day: \(nextDay)")
+                                    checkIntermediateGoals()  // Move this line here
                                     updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true) // Remove isProgressIncreased label
-                                }) {
-                                    Image(systemName: "plus.circle")
-                                }
+                                                            }) {
+                                                                Image(systemName: "plus.circle")
+                                                            }
                                 .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
                                 .padding(.trailing)
                                 .font(.system(size: 30))
+                            }
+                            .alert(isPresented: $showingIntermediateAlert) {  // Add this alert
+                                Alert(title: Text("中間目標を達成"), message: Text("おめでとうございます！\n中間目標\(goal)を達成しました！"), dismissButton: .default(Text("OK")))
                             }
                         }
                     }
