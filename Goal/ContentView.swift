@@ -14,15 +14,17 @@ struct ProgressRingView: View {
     var updateProgressInFirebase: (Int, Int, Date, Bool) -> Void
     @State private var showingAlert = false
     @State private var showingIntermediateAlert = false  // Add this line
+    @State private var showAlert: Bool = false
+    @State private var achievedIntermediateGoalIndex: Int?
 
-    func checkIntermediateGoals() {  // Modify this function
-        for goal in intermediate_goals {
-            if goal.progress + 1 == goal.value {  // Change "== goal.value" to "== goal.value - 1"
-                showingIntermediateAlert = true
-                break
-            }
+    func checkIntermediateGoals(for index: Int) {
+        let goal = intermediate_goals[index]
+        if goal.progress + 1 == goal.value {
+            achievedIntermediateGoalIndex = index // <- Add this line
+            showingIntermediateAlert = true
         }
     }
+
 
     var body: some View {
         VStack{
@@ -111,20 +113,25 @@ struct ProgressRingView: View {
                                 Spacer()
                                 Button(action: {
                                     let currentDate = Date()  // Get current date
-                                    //print("currentDate:\(currentDate)")
-                                    //guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
-                                    //print("Next day: \(nextDay)")
-                                    checkIntermediateGoals()  // Move this line here
-                                    updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true) // Remove isProgressIncreased label
-                                                            }) {
-                                                                Image(systemName: "plus.circle")
-                                                            }
+                                    checkIntermediateGoals(for: index)
+                                    updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true)
+                                }) {
+                                    Image(systemName: "plus.circle")
+                                }
                                 .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
                                 .padding(.trailing)
                                 .font(.system(size: 30))
                             }
-                            .alert(isPresented: $showingIntermediateAlert) {  // Add this alert
-                                Alert(title: Text("中間目標を達成"), message: Text("おめでとうございます！\n中間目標\(goal)を達成しました！"), dismissButton: .default(Text("OK")))
+                            .alert(isPresented: $showingIntermediateAlert) {
+                                // Make sure the index is valid before trying to access the goal
+                                guard let index = achievedIntermediateGoalIndex, intermediate_goals.indices.contains(index) else {
+                                    return Alert(title: Text("エラー"), message: Text("達成した中間目標を表示できませんでした。"), dismissButton: .default(Text("OK")))
+                                }
+
+                                // Access the achieved goal
+                                let achievedGoal = intermediate_goals[index]
+
+                                return Alert(title: Text("中間目標を達成"), message: Text("おめでとうございます！\n中間目標の\(achievedGoal.goal)を達成しました！"), dismissButton: .default(Text("OK")))
                             }
                         }
                     }

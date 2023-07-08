@@ -29,6 +29,8 @@ class GoalViewModel: ObservableObject {
     @Published var selectedYear = ""
     @Published var selectedMonth = ""
 //var cancellables = Set<AnyCancellable>()
+    @Published var showRewardAchievedAlert = false
+
     
     init() {
         let date = Date()
@@ -270,6 +272,12 @@ class GoalViewModel: ObservableObject {
         // Calculate the reward progress rate
         let rewardProgressRate = totalProgress / totalTargetProgress * 100
         print("rewardProgressRate:\(rewardProgressRate)")
+        
+        if rewardProgressRate >= 100.0 {
+            DispatchQueue.main.async {
+                self.showRewardAchievedAlert = true
+            }
+        }
 
         // Return the reward progress rate
         return rewardProgressRate

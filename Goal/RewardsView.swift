@@ -11,7 +11,7 @@ struct RewardsView: View {
     @StateObject private var viewModel = GoalViewModel()
     //let totalProgress = viewModel.calculateRewardProgressRate()
     @State private var rewardProgressRate: Double = 0.0
-
+    @State private var showAlert: Bool = false
 
     var body: some View {
         VStack{
@@ -44,13 +44,18 @@ struct RewardsView: View {
                             HStack{
                                 Text(reward.name)
                                 Spacer()
-                                Text("残り\(100-reward.progressRate(for: viewModel.intermediateGoals))%")
+                                Text("残り\(max(100-reward.progressRate(for: viewModel.intermediateGoals), 0))%")
+                                    .onChange(of: reward.progressRate(for: viewModel.intermediateGoals)) { newValue in
+                                        if 100 - newValue <= 0 {
+                                            showAlert = true
+                                        }
+                                    }
                             }
                             .font(.system(size: 30))
                             HStack{
                                 Spacer()
                             }
-                            ProgressView(value: min(Double(viewModel.progress * 100) / Double(reward.progress), 1.0))
+                            ProgressView(value: max(min(Double(viewModel.progress * 100) / Double(reward.progress), 1.0), 0.0))
                             
                         }
                         .padding()
@@ -71,6 +76,15 @@ struct RewardsView: View {
             }
 
             .background(Color(red: 0.99, green: 0.99, blue: 0.99, opacity: 1.0))
+        }
+        .alert(isPresented: $viewModel.showRewardAchievedAlert) {
+            Alert(
+                title: Text("達成！"),
+                message: Text("ご褒美の進捗率が100%に達しました。おめでとうございます！"),
+                dismissButton: .default(Text("OK")) {
+                    viewModel.showRewardAchievedAlert = false  // Reset the state
+                }
+            )
         }
     }
 }
