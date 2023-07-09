@@ -16,6 +16,17 @@ struct ProgressRingView: View {
     @State private var showingIntermediateAlert = false  // Add this line
     @State private var showAlert: Bool = false
     @State private var achievedIntermediateGoalIndex: Int?
+    @EnvironmentObject private var viewModel: GoalViewModel
+    @State private var showPostView = false
+    @StateObject var router = NavigationRouter()
+    @StateObject var appState = AppState()
+    
+    init(progress: Double, goal: String, intermediate_goals: [GoalViewModel.IntermediateGoal], updateProgressInFirebase: @escaping (Int, Int, Date, Bool) -> Void) {
+        self.progress = progress
+        self.goal = goal
+        self.intermediate_goals = intermediate_goals
+        self.updateProgressInFirebase = updateProgressInFirebase
+    }
 
     func checkIntermediateGoals(for index: Int) {
         let goal = intermediate_goals[index]
@@ -75,6 +86,22 @@ struct ProgressRingView: View {
                 }
                 
                 ScrollView {
+                    Button(action: {
+                        self.viewModel.deleteGoalWithConfirmation {
+                            DispatchQueue.main.async {
+                                print("Setting showRootView to true")
+                                self.viewModel.showRootView = true
+                                print("showRootView is now \(self.viewModel.showRootView)")
+                            }
+                        }
+                    }) {
+                        Text("目標を削除")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(10)
+                    }
+                    .frame(width:100,height:300)
                     VStack {
                         ForEach(0..<intermediate_goals.count, id: \.self) { index in
                                                 let intermediate_goal = intermediate_goals[index]
@@ -92,6 +119,7 @@ struct ProgressRingView: View {
                                     guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
                                     //print("Next day: \(nextDay)")
                                     updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate, false) // Remove isProgressIncreased label
+                                    print("currentDate:\(currentDate)")
                                 }) {
                                     Image(systemName: "minus.circle")
                                 }
@@ -115,6 +143,7 @@ struct ProgressRingView: View {
                                     let currentDate = Date()  // Get current date
                                     checkIntermediateGoals(for: index)
                                     updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true)
+                                    print("currentDate:\(currentDate)")
                                 }) {
                                     Image(systemName: "plus.circle")
                                 }
@@ -146,36 +175,44 @@ struct ProgressRingView: View {
 }
 
 struct ContentView: View {
-    @StateObject private var viewModel = GoalViewModel()
-
+    @EnvironmentObject private var viewModel: GoalViewModel
+    @StateObject var router = NavigationRouter()
+    @StateObject var appState = AppState()
+    
     var body: some View {
-        Group {
-            if viewModel.dataFetched {
-                //Text("\(viewModel.dataFetched)")
-                ProgressRingView(
-                    progress: viewModel.progress,
-                    goal: viewModel.goal,
-                    intermediate_goals: viewModel.intermediateGoals,  // Change this line
-                    updateProgressInFirebase: { index, newProgress, date, isProgressIncreased in
-                        viewModel.updateIntermediateProgress(index, newProgress, date, isProgressIncreased: isProgressIncreased)
-                    }
-                )
-            } else {
-                // Display a loading indicator or placeholder here
-                Text("Loading...")
+        if viewModel.showRootView {
+            RootView()
+                .environmentObject(router)
+                .environmentObject(appState)
+        } else {
+            Group {
+                if viewModel.dataFetched {
+                    //Text("\(viewModel.dataFetched)")
+                    ProgressRingView(
+                        progress: viewModel.progress,
+                        goal: viewModel.goal,
+                        intermediate_goals: viewModel.intermediateGoals,
+                        updateProgressInFirebase: { index, newProgress, date, isProgressIncreased in
+                            viewModel.updateIntermediateProgress(index, newProgress, date, isProgressIncreased: isProgressIncreased)
+                        }
+                    )
+                } else {
+                    // Display a loading indicator or placeholder here
+                    Text("Loading...")
+                }
             }
-        }
             .onAppear {
                 viewModel.fetchGoal(){
                     
                 }
             }
+        }
     }
 }
 
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(GoalViewModel())
     }
 }

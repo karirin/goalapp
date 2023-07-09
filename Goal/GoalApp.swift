@@ -30,6 +30,7 @@ struct GoalApp: App {
             if appState.hasPosts {
                 // If there are posts, display the TopView
                 TopView()
+                    .environmentObject(GoalViewModel())
             } else {
                 // If there are no posts, display the PostView
                 RootView()

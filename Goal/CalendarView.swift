@@ -84,18 +84,31 @@ struct CalendarUIView: UIViewRepresentable {
             return eventCount
         }
         
+        // Add this in CalendarUIView's Coordinator class
         func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) {
                 self.parent.selectedDate = date
+
+                let isGoalAchievementDate = self.viewModel.achievementDates.contains(where: { Calendar.current.isDate($0, inSameDayAs: date) })
+                let isIntermediateGoalDate = self.viewModel.intermediateGoals.contains(where: { Calendar.current.isDate($0.date, inSameDayAs: date) })
+
+                if isGoalAchievementDate {
+                    self.viewModel.selectedDateType = .goalAchievement
+                } else if isIntermediateGoalDate {
+                    self.viewModel.selectedDateType = .intermediateGoal
+                } else {
+                    self.viewModel.selectedDateType = .none
+                }
             }
         }
+
+
         
         func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
             var calendar = Calendar.current
             calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
             let components = calendar.dateComponents([.year, .month, .day], from: date)
             let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
-
             if isToday(date) {
                 return .black // 今日の文字色を先にチェックして、黒に設定
             } else if achievementDatesComponents.contains(components) {
@@ -103,20 +116,25 @@ struct CalendarUIView: UIViewRepresentable {
             }
             return nil // 他の日付はデフォルトの色に
         }
-
+        
         func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
             var calendar = Calendar.current
             calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")! // Set timeZone to JST
             let components = calendar.dateComponents([.year, .month, .day], from: date)
             let achievementDatesComponents = viewModel.achievementDates.map { calendar.dateComponents([.year, .month, .day], from: $0) }
-
+            print("achievementDatesComponents:\(achievementDatesComponents)")
+            let intermediateGoalDatesComponents = viewModel.intermediateGoals.map { calendar.dateComponents([.year, .month, .day], from: $0.date) }  // 追加
+            print("intermediateGoalDatesComponents:\(intermediateGoalDatesComponents)")
             if achievementDatesComponents.contains(components) {
                 return .red // 達成日の背景色を赤に
-            } else if isToday(date) { // Add this line
-                return .white // 今日の背景色を青に設定（自由に変更可能）
+            } else if intermediateGoalDatesComponents.contains(components) {  // 追加
+                return .blue // 中間目標の達成日の背景色を青に
+            } else if isToday(date) {
+                return .white // 今日の背景色を白に
             }
             return nil // 他の日付はデフォルトの色に
         }
+
         
         func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
             let currentPageDate = calendar.currentPage
@@ -167,6 +185,14 @@ struct CalendarTestView: View {
                     }
                     .padding(.leading,15)
                     .padding(.bottom,5)
+                    if viewModel.selectedDateType == .goalAchievement {
+                        Text("Goal achievement date selected")
+                    } else if viewModel.selectedDateType == .intermediateGoal {
+                        if let intermediateGoal = viewModel.intermediateGoals.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                            Text("中間目標：\(intermediateGoal.goal)の達成日です")
+                        }
+                    }
+
                     ForEach(selectedGoalsAndClicks, id: \.0.id) { goal, clickCount in
                         HStack{
                             Text(" ")
@@ -191,8 +217,20 @@ struct CalendarTestView: View {
             selectedGoalsAndClicks = goalsAndClicks
         }
         .onChange(of: selectedDate) { newDate in
-            selectedGoalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: newDate)
+            var goalsAndClicks = viewModel.intermediateGoalsAndClickCounts(on: newDate)
+            for (index, goalAndClick) in goalsAndClicks.enumerated() {
+                var (goal, clickCount) = goalAndClick
+                let isAchievementDate = viewModel.achievementDates.contains { Calendar.current.isDate($0, inSameDayAs: newDate) }
+                let isIntermediateGoalDate = viewModel.intermediateGoals.map { $0.date }.contains { Calendar.current.isDate($0, inSameDayAs: newDate) }
+                print("Achievement date: \(isAchievementDate), Intermediate goal date: \(isIntermediateGoalDate)")
+                goal.isAchievementDate = isAchievementDate
+                goal.isIntermediateGoalDate = isIntermediateGoalDate
+                goalsAndClicks[index] = (goal, clickCount)
+            }
+            selectedGoalsAndClicks = goalsAndClicks
         }
+
+
         .background(Color(red: 0.99, green: 0.99, blue: 0.99, opacity: 1.0))
     }
 }

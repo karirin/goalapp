@@ -10,13 +10,14 @@ import FirebaseDatabase
 import UIKit
 
 struct TopView: View {
-    @StateObject var viewModel = GoalViewModel()
+    @EnvironmentObject private var viewModel: GoalViewModel
     @State private var selectedTab = 0  // <- Add this line
     
     var body: some View {
         VStack {
             TabView(selection: $selectedTab) {  // <- Add "selection: $selectedTab"
                 ContentView()
+                    .environmentObject(viewModel)
                     .tag(0)  // <- Add this line
                     .tabItem {
                         Image(systemName: "house")
@@ -54,5 +55,6 @@ struct TopView: View {
 struct TopView_Previews: PreviewProvider {
     static var previews: some View {
         TopView()
+            .environmentObject(GoalViewModel())
     }
 }

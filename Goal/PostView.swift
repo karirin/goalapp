@@ -115,6 +115,7 @@ struct RootView: View {
                 FourthPage(goal: $appState.goal, date: $appState.date, milestones: $appState.milestones)
             case .content:
                 TopView()
+                    .environmentObject(GoalViewModel())
             }
         }
     }
@@ -138,7 +139,8 @@ struct FirstPage: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
-                        .padding()
+                        .padding(.horizontal)
+                        .padding(.top,5)
                 HStack {
                     Spacer()
                 TextField("目標", text: $goal)
@@ -210,7 +212,8 @@ struct SecondPage: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top,5)
             HStack{
                 Spacer()
                 Image(systemName: "calendar")
@@ -295,32 +298,37 @@ struct ThirdPage: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top,5)
             ScrollView{
                 ForEach(milestones.indices, id: \.self) { index in
                     VStack {
                             TextField("中間目標", text: $milestones[index].goal)
                                 .font(.system(size: 22))
                         HStack {
+                            Text("値：")
                             TextField("値", text: Binding<String>(
                                 get: { String(self.milestones[index].value) },
                                 set: { self.milestones[index].value = Int($0) ?? 0 }
                             ))
-                            .font(.system(size: 22))
+                            .frame(width:80)
                             TextField("単位", text: $milestones[index].unit)
-                                .font(.system(size: 22))
+                            Spacer()
+                        }.font(.system(size: 22))
+                        HStack{
                             Text("達成日：")
                             Image(systemName: "calendar")
                             DatePicker("", selection: $milestones[index].date, displayedComponents: .date)
                                 .environment(\.locale, Locale(identifier: "ja_JP"))
-                            //Spacer()
-                        }
+                                .frame(width:120)
+                            Spacer()
+                        }.font(.system(size: 22))
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
                 .onDelete(perform: deleteMilestones)
             }
-            .frame(height:230)
+            .frame(height:250)
             HStack{
                 Button(action: {
                     if milestones.count > 1 { // マイルストーンが1つ以上の場合にのみ削除を実行
@@ -422,7 +430,8 @@ struct FourthPage: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top,5)
             ScrollView{
                 ForEach(rewards.indices, id: \.self) { index in
                     VStack{
@@ -438,10 +447,10 @@ struct FourthPage: View {
                         }
                         TextField("ご褒美名", text: $rewards[index].name)
                     }
-                    .font(.system(size: 28))
+                    .font(.system(size: 22))
                     .padding(.horizontal)
                 }
-            }.frame(height:150)
+            }.frame(height:240)
             HStack{
                 Button(action: {
                     if rewards.count > 1 { // リストが1つ以上の場合にのみ削除を実行

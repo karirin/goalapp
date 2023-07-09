@@ -30,8 +30,9 @@ class GoalViewModel: ObservableObject {
     @Published var selectedMonth = ""
 //var cancellables = Set<AnyCancellable>()
     @Published var showRewardAchievedAlert = false
+    @Published var selectedDateType: DateType = .none  // Add this line
+    @Published var showRootView: Bool = false
 
-    
     init() {
         let date = Date()
         let components = Calendar.current.dateComponents([.year, .month], from: date)
@@ -58,6 +59,9 @@ class GoalViewModel: ObservableObject {
         var unit: String
         var value: Int
         var clicks: [Click] // `Click` is now `Hashable`
+        let date: Date  // 追加
+        var isAchievementDate: Bool  // 新しいフラグ
+        var isIntermediateGoalDate: Bool  // 新しいフラグ
     }
     
     struct ClickInfo {
@@ -68,6 +72,12 @@ class GoalViewModel: ObservableObject {
     enum FirebaseError: Error {
         case userNotLoggedIn
         case noDataAvailable
+    }
+    
+    enum DateType {
+        case none
+        case goalAchievement
+        case intermediateGoal
     }
 
     func calculateProgressRate() {
@@ -162,6 +172,7 @@ class GoalViewModel: ObservableObject {
             } else if let snapshot = snapshot, snapshot.exists(), let postDict = snapshot.value as? [String: [String: Any]] {
                 for (key, postData) in postDict {
                     self.postKey = key
+                    print("postKey fetched: \(self.postKey ?? "nil")")  // Log the fetched postKey
 
                     if let validKey = key as? String {
                         self.postKey = validKey
@@ -180,7 +191,8 @@ class GoalViewModel: ObservableObject {
                             if let goal = intermediate_goal["goal"] as? String,
                                let unit = intermediate_goal["unit"] as? String,
                                let value = intermediate_goal["value"] as? Int,
-                               let progress = intermediate_goal["progress"] as? Int {
+                               let progress = intermediate_goal["progress"] as? Int,
+                               let dateString = intermediate_goal["date"] as? String {  // 追加
                                 var clicks: [Click] = [] // Initialize the clicks array
 
                                 if let clicksData = intermediate_goal["clicks"] as? [String: [String: Any]] {
@@ -195,10 +207,15 @@ class GoalViewModel: ObservableObject {
                                         }
                                     }
                                 }
-
-
+                                
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "yyyy-MM-dd"
+                                guard let date = dateFormatter.date(from: dateString) else {
+                                    print("Invalid date string: \(dateString)")
+                                    return
+                                }
                                 DispatchQueue.main.async {
-                                    self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value, clicks: clicks))
+                                    self.intermediateGoals.append(IntermediateGoal(goal: goal, progress: progress, unit: unit, value: value, clicks: clicks, date: date, isAchievementDate: false, isIntermediateGoalDate: false))
                                 }
                             }
                         }
@@ -326,6 +343,54 @@ class GoalViewModel: ObservableObject {
         }
 
         return totalClickCount
+    }
+    
+    func deleteGoal(completion: @escaping (Result<Void, Error>) -> Void) {
+            guard let postKey = self.postKey else {
+                completion(.failure(FirebaseError.noDataAvailable))
+                print("postKey:\(postKey)")
+                return
+            }
+
+            if let validPostKey = postKey as? String {
+            // `validPostKey`が`nil`でないことが保証されているブロック内で、Firebaseの操作を行います
+            db.child("posts/\(validPostKey)").removeValue { error, _ in
+                if let error = error {
+                    print("Error removing goal: \(error)")
+                    completion(.failure(error))
+                } else {
+                    print("Goal removed successfully")
+                    completion(.success(()))
+                }
+            }
+        } else {
+            // `postKey`が`nil`の場合のエラーハンドリングを行います
+            completion(.failure(FirebaseError.noDataAvailable))
+        }
+    }
+
+    func deleteGoalWithConfirmation(onConfirmed: @escaping () -> Void) {
+        let alertController = UIAlertController(title: "目標を削除", message: "本当に今の目標を削除してもいいですか？", preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "削除", style: .destructive) { _ in
+            self.deleteGoal { result in
+                switch result {
+                case .success():
+                    print("Goal deleted")
+                    onConfirmed()
+                    DispatchQueue.main.async {
+                        self.showRootView = true
+                    }
+                case .failure(let error):
+                    print("Failed to delete goal: \(error)")
+                }
+            }
+        }
+        let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel)
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        if let viewController = UIApplication.shared.windows.first?.rootViewController {
+            viewController.present(alertController, animated: true)
+        }
     }
 }
 
