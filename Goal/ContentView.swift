@@ -176,15 +176,8 @@ struct ProgressRingView: View {
 
 struct ContentView: View {
     @EnvironmentObject private var viewModel: GoalViewModel
-    @StateObject var router = NavigationRouter()
-    @StateObject var appState = AppState()
     
     var body: some View {
-        if viewModel.showRootView {
-            RootView()
-                .environmentObject(router)
-                .environmentObject(appState)
-        } else {
             Group {
                 if viewModel.dataFetched {
                     //Text("\(viewModel.dataFetched)")
@@ -206,7 +199,6 @@ struct ContentView: View {
                     
                 }
             }
-        }
     }
 }
 
