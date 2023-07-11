@@ -211,11 +211,34 @@ struct ChartView: View {
             HStack{
                 Text("")
                 Spacer()
+                Image(systemName: "chevron.left")
+                    .onTapGesture {
+                        // 「<」をクリックしたときのアクション
+                        // 選択した月を一つ減らす
+                        var newMonth = (Int(viewModel.selectedMonth) ?? 1) - 1
+                        if newMonth < 1 {
+                            newMonth = 12
+                            viewModel.selectedYear = String(Int(viewModel.selectedYear)! - 1)
+                        }
+                        viewModel.selectedMonth = String(format: "%02d", newMonth)
+                    }
                 Text("\(viewModel.selectedYear)年\(viewModel.selectedMonth)月")
                     .onReceive(viewModel.$selectedYear) { _ in // selectedYearが変わるたびに呼ばれる
                         viewModel.fetchGoal(){
                             
                         }
+                    }
+                    .padding(.horizontal)
+                Image(systemName: "chevron.right")
+                    .onTapGesture {
+                        // 「>」をクリックしたときのアクション
+                        // 選択した月を一つ増やす
+                        var newMonth = (Int(viewModel.selectedMonth) ?? 1) + 1
+                        if newMonth > 12 {
+                            newMonth = 1
+                            viewModel.selectedYear = String(Int(viewModel.selectedYear)! + 1)
+                        }
+                        viewModel.selectedMonth = String(format: "%02d", newMonth)
                     }
                 Spacer()
                 Text("")
@@ -223,8 +246,9 @@ struct ChartView: View {
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
-            .frame(height:20)
+            .frame(height:50)
             .fontWeight(.bold)
+            .font(.system(size: 20))
             VStack {
                 // 必要に応じて条件を設けてチャートを描画する
                 if !viewModel.intermediateGoals.isEmpty {

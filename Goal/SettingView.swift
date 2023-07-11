@@ -9,19 +9,11 @@ import SwiftUI
 import WebKit
 
 struct SettingsView: View {
+    @EnvironmentObject private var viewModel: GoalViewModel // Add this line
     var body: some View {
         NavigationView {
             List {
                 Section(header: Text("情報")) {
-//                    NavigationLink(destination: PrivacyView()) {
-//                        HStack {
-//                            Text("ライセンス")
-//                            Spacer()
-//                            Image(systemName: "chevron.right")
-//                                .foregroundColor(Color(.systemGray4))
-//                        }
-//                    }
-                    
                     NavigationLink(destination: TermsOfServiceView()) {
                         HStack {
                             Text("利用規約")
@@ -49,6 +41,25 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section(header: Text("目標の管理")) {
+                                   Button(action: {
+                                       self.viewModel.deleteGoalWithConfirmation {
+                                           DispatchQueue.main.async {
+                                               print("Setting showRootView to true")
+                                               self.viewModel.showRootView = true
+                                               print("showRootView is now \(self.viewModel.showRootView)")
+                                           }
+                                       }
+                                   }) {
+                                       HStack{
+                                           Text("目標を削除")
+                                               .foregroundColor(.black)
+                                           Spacer()
+                                           Image(systemName: "chevron.right")
+                                               .foregroundColor(Color(.systemGray4))
+                                       }
+                                   }
+                               }
             }
             .listStyle(GroupedListStyle())
             .navigationBarTitle("設定")

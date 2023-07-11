@@ -27,7 +27,10 @@ struct GoalApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if appState.hasPosts {
+            if appState.isLoading {
+                // Display a loading view while data is loading
+                LoadingView(3)
+            } else if appState.hasPosts {
                 // If there are posts, display the TopView
                 TopView()
                     .environmentObject(GoalViewModel())
@@ -40,3 +43,4 @@ struct GoalApp: App {
         }
     }
 }
+

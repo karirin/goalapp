@@ -29,13 +29,18 @@ struct ProgressRingView: View {
     }
 
     func checkIntermediateGoals(for index: Int) {
-        let goal = intermediate_goals[index]
-        if goal.progress + 1 == goal.value {
-            achievedIntermediateGoalIndex = index // <- Add this line
-            showingIntermediateAlert = true
+        print("checkIntermediateGoals index:\(index)")
+        if index < intermediate_goals.count {
+            let goal = intermediate_goals[index]
+            if goal.progress + 1 == goal.value {
+                achievedIntermediateGoalIndex = index
+                showingIntermediateAlert = true
+            }
+        } else {
+            // indexが範囲外の場合の処理を書く
+            print("Index out of range1")
         }
     }
-
 
     var body: some View {
         VStack{
@@ -50,6 +55,8 @@ struct ProgressRingView: View {
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
+            .frame(height:50)
+            .font(.system(size: 20))
             VStack {
                 //.frame(height: 40)
                 ZStack {
@@ -86,81 +93,72 @@ struct ProgressRingView: View {
                 }
                 
                 ScrollView {
-                    Button(action: {
-                        self.viewModel.deleteGoalWithConfirmation {
-                            DispatchQueue.main.async {
-                                print("Setting showRootView to true")
-                                self.viewModel.showRootView = true
-                                print("showRootView is now \(self.viewModel.showRootView)")
-                            }
-                        }
-                    }) {
-                        Text("目標を削除")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(10)
-                    }
-                    .frame(width:100,height:300)
                     VStack {
                         ForEach(0..<intermediate_goals.count, id: \.self) { index in
-                                                let intermediate_goal = intermediate_goals[index]
-                            HStack{
-                                Text(intermediate_goal.goal)
-                                    .font(.system(size: 24))
-                                    .padding(.top)
-                                    .padding(.bottom,1)
-                                Spacer()
-                            }
-                            .padding(.leading)
-                            HStack{
-                                Button(action: {
-                                    let currentDate = Date()
-                                    guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
-                                    //print("Next day: \(nextDay)")
-                                    updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate, false) // Remove isProgressIncreased label
-                                    print("currentDate:\(currentDate)")
-                                }) {
-                                    Image(systemName: "minus.circle")
-                                }
-                                .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
-                                .padding(.leading)
-                                .font(.system(size: 30))
+                            if index < intermediate_goals.count {
+                                let intermediate_goal = intermediate_goals[index]
                                 
-                                Spacer()
-                                VStack {
-                                    HStack {
-                                        Text("\(intermediate_goal.progress)")
-                                        Text(" / ")
-                                        Text("\(intermediate_goal.value)")
-                                        Text(intermediate_goal.unit)
+                                HStack{
+                                    //Text("index: \(intermediate_goals.count)")
+                                    Text(intermediate_goal.goal)
+                                        .font(.system(size: 24))
+                                        .padding(.top)
+                                        .padding(.bottom,1)
+                                    Spacer()
+                                }
+                                .padding(.leading)
+                                HStack{
+                                    Button(action: {
+                                        let currentDate = Date()
+                                        guard let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) else { return }
+                                        //print("Next day: \(nextDay)")
+                                        updateProgressInFirebase(index, intermediate_goal.progress - 1, currentDate, false) // Remove isProgressIncreased label
+                                        print("currentDate:\(currentDate)")
+                                    }) {
+                                        Image(systemName: "minus.circle")
                                     }
+                                    .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
+                                    .padding(.leading)
+                                    .font(.system(size: 30))
+                                    
+                                    Spacer()
+                                    VStack {
+                                        HStack {
+                                            Text("\(intermediate_goal.progress)")
+                                            Text(" / ")
+                                            Text("\(intermediate_goal.value)")
+                                            Text(intermediate_goal.unit)
+                                        }
+                                    }
+                                    .font(.system(size: 25))
+                                    //.padding(.bottom)
+                                    Spacer()
+                                    Button(action: {
+                                        let currentDate = Date()  // Get current date
+                                        checkIntermediateGoals(for: index)
+                                        updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true)
+                                        print("currentDate:\(currentDate)")
+                                    }) {
+                                        Image(systemName: "plus.circle")
+                                    }
+                                    .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
+                                    .padding(.trailing)
+                                    .font(.system(size: 30))
                                 }
-                                .font(.system(size: 25))
-                                //.padding(.bottom)
-                                Spacer()
-                                Button(action: {
-                                    let currentDate = Date()  // Get current date
-                                    checkIntermediateGoals(for: index)
-                                    updateProgressInFirebase(index, intermediate_goal.progress + 1, currentDate, true)
-                                    print("currentDate:\(currentDate)")
-                                }) {
-                                    Image(systemName: "plus.circle")
+                                .alert(isPresented: $showingIntermediateAlert) {
+                                    // Make sure the index is valid before trying to access the goal
+                                    guard let index = achievedIntermediateGoalIndex, intermediate_goals.indices.contains(index) else {
+                                        return Alert(title: Text("エラー"), message: Text("達成した中間目標を表示できませんでした。"), dismissButton: .default(Text("OK")))
+                                    }
+                                    
+                                    // Access the achieved goal
+                                    let achievedGoal = intermediate_goals[index]
+                                    print("index:\(index)")
+                                    return Alert(title: Text("中間目標を達成"), message: Text("おめでとうございます！\n中間目標の\(achievedGoal.goal)を達成しました！"), dismissButton: .default(Text("OK")))
                                 }
-                                .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.5))
-                                .padding(.trailing)
-                                .font(.system(size: 30))
-                            }
-                            .alert(isPresented: $showingIntermediateAlert) {
-                                // Make sure the index is valid before trying to access the goal
-                                guard let index = achievedIntermediateGoalIndex, intermediate_goals.indices.contains(index) else {
-                                    return Alert(title: Text("エラー"), message: Text("達成した中間目標を表示できませんでした。"), dismissButton: .default(Text("OK")))
-                                }
-
-                                // Access the achieved goal
-                                let achievedGoal = intermediate_goals[index]
-
-                                return Alert(title: Text("中間目標を達成"), message: Text("おめでとうございます！\n中間目標の\(achievedGoal.goal)を達成しました！"), dismissButton: .default(Text("OK")))
+                            } else {
+                                // indexが範囲外の場合の処理を書く
+                                Text("Index out of range1")
                             }
                         }
                     }
@@ -181,17 +179,24 @@ struct ContentView: View {
             Group {
                 if viewModel.dataFetched {
                     //Text("\(viewModel.dataFetched)")
+                    
                     ProgressRingView(
                         progress: viewModel.progress,
                         goal: viewModel.goal,
                         intermediate_goals: viewModel.intermediateGoals,
                         updateProgressInFirebase: { index, newProgress, date, isProgressIncreased in
-                            viewModel.updateIntermediateProgress(index, newProgress, date, isProgressIncreased: isProgressIncreased)
+                            print("updateIntermediateProgress呼び出し前のindex:\(index)")
+                            if index < viewModel.intermediateGoals.count {
+                                viewModel.updateIntermediateProgress(index, newProgress, date, isProgressIncreased: isProgressIncreased)
+                            } else {
+                                // indexが範囲外の場合の処理を書く
+                                print("Index out of range1")
+                            }
                         }
                     )
                 } else {
                     // Display a loading indicator or placeholder here
-                    Text("Loading...")
+                    LoadingView(3)
                 }
             }
             .onAppear {

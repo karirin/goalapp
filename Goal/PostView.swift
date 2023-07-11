@@ -82,6 +82,7 @@ class AppState: ObservableObject {
     @Published var date: Date = Date()
     @Published var milestones: [Milestone] = [Milestone(goal: "", value: 0, unit: "")]
     @Published var hasPosts: Bool = false
+    @Published var isLoading: Bool = true
     // Add other states as needed
 
     init() {
@@ -93,6 +94,8 @@ class AppState: ObservableObject {
         postsRef.queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId).observeSingleEvent(of: .value) { snapshot in
             // Set hasPosts to true if there are any posts for the current user
             self.hasPosts = snapshot.exists()
+            // Loading finished, update isLoading to false
+            self.isLoading = false
         }
     }
 }
@@ -437,12 +440,14 @@ struct FourthPage: View {
                     VStack{
                         HStack{
                             Text("進捗率")
-                            TextField("進捗率", text: Binding<String>(
-                                get: { String(self.rewards[index].progress) },
-                                set: { self.rewards[index].progress = Int($0) ?? 0 }
-                            ))
-                            .frame(width:60)
-                            Text("％")
+                            Picker(selection: $rewards[index].progress, label: Text("進捗率")) {
+                                ForEach(Array(stride(from: 10, to: 101, by: 10)), id: \.self) { progress in
+                                    Text("\(progress) %").tag(progress)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .labelsHidden() // ラベルを非表示にする
+                            .frame(width:100,height:50)
                             Spacer()
                         }
                         TextField("ご褒美名", text: $rewards[index].name)

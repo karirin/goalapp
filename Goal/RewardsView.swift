@@ -26,7 +26,8 @@ struct RewardsView: View {
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
-            .frame(height:30)
+            .frame(height:50)
+            .font(.system(size: 20))
             ScrollView {
                 VStack {
                     //Text("全体の進捗: \(totalProgress * 100)%")
@@ -40,30 +41,26 @@ struct RewardsView: View {
                         .padding(.leading)
                         .padding(.top)
                         .font(.system(size: 30))
-                        VStack(alignment: .leading) {
-                            HStack{
+                            VStack{
                                 Text(reward.name)
-                                Spacer()
-                                Text("残り\(max(100-reward.progressRate(for: viewModel.intermediateGoals), 0))%")
-                                    .onChange(of: reward.progressRate(for: viewModel.intermediateGoals)) { newValue in
-                                        if 100 - newValue <= 0 {
-                                            showAlert = true
+                                HStack{
+                                    Spacer()
+                                    Text("残り\(max(100-reward.progressRate(for: viewModel.intermediateGoals), 0))%")
+                                        .onChange(of: reward.progressRate(for: viewModel.intermediateGoals)) { newValue in
+                                            if 100 - newValue <= 0 {
+                                                showAlert = true
+                                            }
                                         }
-                                    }
-                            }
-                            .font(.system(size: 30))
-                            HStack{
-                                Spacer()
-                            }
+                                }
                             ProgressView(value: max(min(Double(viewModel.progress * 100) / Double(reward.progress), 1.0), 0.0))
-                            
+                                .accentColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 1))
                         }
                         .padding()
                         .frame(maxWidth: .infinity, minHeight: 100)
                         .background(.white)
                         .cornerRadius(24)
                         .shadow(color: Color(.black).opacity(0.2), radius: 8, x: 0, y: 4)
-                        .padding()
+                        .padding(.horizontal)
                     }
                 }
             }

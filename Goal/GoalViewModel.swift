@@ -108,10 +108,12 @@ class GoalViewModel: ObservableObject {
 
     func updateIntermediateProgress(_ index: Int, _ newProgress: Int, _ date: Date, isProgressIncreased: Bool = true) { // Add isProgressIncreased parameter
         guard index < intermediateGoals.count else { return }
+        print("index:\(index)")
 
         let oldProgress = intermediateGoals[index].progress
 
         intermediateGoals[index].progress = newProgress
+        print("index2:\(index)")
 
         if let unwrappedPostKey = self.postKey {
             let progressPath = "posts/\(unwrappedPostKey)/intermediate_goal/\(index)/progress"
@@ -162,6 +164,7 @@ class GoalViewModel: ObservableObject {
     }
 
     func fetchGoal(completion: @escaping () -> Void) {
+        print("fetchGoal start")
         guard let userID = Auth.auth().currentUser?.uid else {
             return
         }
@@ -187,6 +190,7 @@ class GoalViewModel: ObservableObject {
                     self.intermediateGoals = []
 
                     if let intermediate_goals = postData["intermediate_goal"] as? [[String: AnyObject]] {
+                        print("intermediate_goals get:\(intermediate_goals)")
                         for intermediate_goal in intermediate_goals {
                             if let goal = intermediate_goal["goal"] as? String,
                                let unit = intermediate_goal["unit"] as? String,
@@ -219,9 +223,12 @@ class GoalViewModel: ObservableObject {
                                 }
                             }
                         }
+                        print("intermediate_goals:\(intermediate_goals)")
                     } else {
                         print("Failed to parse intermediate_goal: \(postData["intermediate_goal"] ?? "nil")")
                     }
+                    
+                    
 
                     self.rewards = []
 

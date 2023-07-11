@@ -12,6 +12,7 @@
 		263996412A342CC500E03508 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996402A342CC500E03508 /* PrivacyView.swift */; };
 		263996432A342CF000E03508 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996422A342CF000E03508 /* TermsOfServiceView.swift */; };
 		263996452A367E9700E03508 /* RewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996442A367E9700E03508 /* RewardsView.swift */; };
+		266808182A5C48080067464B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266808172A5C48080067464B /* LoadingView.swift */; };
 		26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A2F5F12A30C79B003AA1D7 /* PostView.swift */; };
 		26A2F5F62A3177A9003AA1D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */; };
 		26A52F452A4EF380003BE6DD /* ProgressCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A52F442A4EF380003BE6DD /* ProgressCircleView.swift */; };
@@ -34,6 +35,7 @@
 		263996402A342CC500E03508 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		263996422A342CF000E03508 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		263996442A367E9700E03508 /* RewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsView.swift; sourceTree = "<group>"; };
+		266808172A5C48080067464B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		26A2F5F12A30C79B003AA1D7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		26A52F442A4EF380003BE6DD /* ProgressCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCircleView.swift; sourceTree = "<group>"; };
@@ -87,17 +89,18 @@
 			isa = PBXGroup;
 			children = (
 				26A5B35F2A2F66AD007C958E /* GoalApp.swift */,
+				266808172A5C48080067464B /* LoadingView.swift */,
 				26A52F442A4EF380003BE6DD /* ProgressCircleView.swift */,
-				26AC0A0E2A47F967003CF236 /* LineChart.swift */,
 				26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */,
 				26A5B3612A2F66AD007C958E /* ContentView.swift */,
 				263996442A367E9700E03508 /* RewardsView.swift */,
+				26AC0A0E2A47F967003CF236 /* LineChart.swift */,
 				26A2F5F12A30C79B003AA1D7 /* PostView.swift */,
 				26AC0A132A4804E7003CF236 /* TestView.swift */,
 				2639963C2A342BD400E03508 /* TopView.swift */,
 				2639963E2A342C9000E03508 /* SettingView.swift */,
-				263996402A342CC500E03508 /* PrivacyView.swift */,
 				26A5B36D2A2F671F007C958E /* CalendarView.swift */,
+				263996402A342CC500E03508 /* PrivacyView.swift */,
 				263996422A342CF000E03508 /* TermsOfServiceView.swift */,
 				26BF4A512A31F764004E3CBC /* AuthManager.swift */,
 				26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */,
@@ -261,6 +264,7 @@
 				263996452A367E9700E03508 /* RewardsView.swift in Sources */,
 				263996432A342CF000E03508 /* TermsOfServiceView.swift in Sources */,
 				26A5B36E2A2F671F007C958E /* CalendarView.swift in Sources */,
+				266808182A5C48080067464B /* LoadingView.swift in Sources */,
 				2639963F2A342C9000E03508 /* SettingView.swift in Sources */,
 				26BF4A502A31A2E6004E3CBC /* GoalViewModel.swift in Sources */,
 				26A52F452A4EF380003BE6DD /* ProgressCircleView.swift in Sources */,
