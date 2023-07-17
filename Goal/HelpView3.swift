@@ -59,7 +59,7 @@ struct SwipeableView3: View {
             .tabViewStyle(PageTabViewStyle())
             
             
-            CustomPageIndicator(numberOfPages: 4, currentPage: $selectedTab)
+            CustomPageIndicator(numberOfPages: 2, currentPage: $selectedTab)
                 .padding(.bottom)
         }
     }
@@ -96,18 +96,24 @@ struct FirstView3: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
             Spacer()
-            Image("チュートリアル２")
+            Image("チュートリアル５")
                 .resizable()
                 .scaledToFit()
             Spacer()
             VStack{
-                Text("中間目標の進捗がある日付にはポインタが表示されています。")
+                Text("折れ線グラフを用いて、中間目標の進捗推移を視覚的に確認することができます。")
+                Text("また、円状の進捗バーは中間目標の進捗率を表しています。")
             }.padding()
                 .padding(.bottom,20)
             }
@@ -130,18 +136,28 @@ struct SecondView3: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
             Spacer()
-            Image("チュートリアル３")
-                .resizable()
-                .scaledToFit()
+            HStack{
+                Image("チュートリアル４")
+                    .resizable()
+                    .scaledToFit()
+                Image("チュートリアル６")
+                    .resizable()
+                    .scaledToFit()
+            }
                 .padding()
             Spacer()
-            Text("また、中間目標は青色、目標は赤色で表示されます。")
+            Text("折れ線グラフは月毎に集計され、画面を左右にスライドすることで各月の進捗を確認できます。")
                 .padding()
                 .padding(.bottom,10)
         }
@@ -169,14 +185,14 @@ struct ThirdView3: View {
             .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
             .foregroundColor(.white)
             Spacer()
-            Image("チュートリアル３")
+            Image("チュートリアル４")
                 .resizable()
                 .scaledToFit()
                 .padding()
             Spacer()
             VStack{
-                Text(" 目標が選択されたら、スタートボタンをクリックして記録を開始します。")
-                Text("  カウントアップタイマーで記録が終わったら、完了ボタンをクリックしてください。")
+                Text(" 折れ線グラフを用いて、中間目標の進捗推移を視覚的に確認することができます。")
+                Text("また、円状の進捗バーは中間目標の進捗率を表しています。")
             }.padding()
                 .padding(.bottom,10)
         }
@@ -205,7 +221,7 @@ struct FourthView3: View {
             .foregroundColor(.white)
             Spacer()
             VStack{
-                Image("チュートリアル４")
+                Image("チュートリアル５")
                     .resizable()
                     .scaledToFit()
                 //.frame(width: 500, height: 500)
@@ -214,8 +230,7 @@ struct FourthView3: View {
             .padding(.top,40)
             Spacer()
             VStack{
-                Text("現在の目標に対する合計記録時間と今回の記録時間が表示されます。")
-                Text("もし記録に関するメモがあれば、入力してください。最後に、戻るボタンをクリックして積み上げ記録の追加を完了させます。")
+                Text("折れ線グラフは月毎に集計され、画面を左右にスライドすることで各月の進捗を確認できます。")
             }
             .padding()
             .padding(.bottom,10)

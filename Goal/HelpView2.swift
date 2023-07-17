@@ -97,7 +97,12 @@ struct FirstView2: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
@@ -131,7 +136,12 @@ struct SecondView2: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
@@ -142,7 +152,7 @@ struct SecondView2: View {
                 .scaledToFit()
                 .padding()
             Spacer()
-            Text("また、中間目標は青色、目標は赤色で表示されます。")
+            Text("中間目標は青色、目標は赤色で表示されます。")
                 .padding()
                 .padding(.bottom,10)
         }

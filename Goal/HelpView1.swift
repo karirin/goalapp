@@ -82,7 +82,12 @@ struct FirstView: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
@@ -100,116 +105,6 @@ struct FirstView: View {
             }
     }
 }
-
-
-//struct SecondView: View {
-//    @Environment(\.presentationMode) var presentationMode
-//
-//    var body: some View {
-//        VStack{
-//            HStack{
-//                Button(action:{
-//                    presentationMode.wrappedValue.dismiss()
-//                }){
-//                    Text("閉じる")
-//                }
-//                .padding()
-//                Spacer()
-//                Text("チュートリアル")
-//                Spacer()
-//                Text("")
-//                Spacer()
-//            }
-//            .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
-//            .foregroundColor(.white)
-//            Spacer()
-//            Image("チュートリアル２")
-//                .resizable()
-//                .scaledToFit()
-//                .padding()
-//            Spacer()
-//            Text("画面上部のプルダウンから、先ほど追加した目標を選択してください。")
-//                .padding()
-//                .padding(.bottom,10)
-//        }
-//    }
-//}
-//
-//struct ThirdView: View {
-//    @Environment(\.presentationMode) var presentationMode
-//
-//    var body: some View {
-//        VStack{
-//            HStack{
-//                Button(action:{
-//                    presentationMode.wrappedValue.dismiss()
-//                }){
-//                    Text("閉じる")
-//                }
-//                .padding()
-//                Spacer()
-//                Text("チュートリアル")
-//                Spacer()
-//                Text("")
-//                Spacer()
-//            }
-//            .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
-//            .foregroundColor(.white)
-//            Spacer()
-//            Image("チュートリアル３")
-//                .resizable()
-//                .scaledToFit()
-//                .padding()
-//            Spacer()
-//            VStack{
-//                Text(" 目標が選択されたら、スタートボタンをクリックして記録を開始します。")
-//                Text("  カウントアップタイマーで記録が終わったら、完了ボタンをクリックしてください。")
-//            }.padding()
-//                .padding(.bottom,10)
-//        }
-//    }
-//}
-//
-//struct FourthView: View {
-//    @Environment(\.presentationMode) var presentationMode
-//
-//    var body: some View {
-//        VStack{
-//            HStack{
-//                Button(action:{
-//                    presentationMode.wrappedValue.dismiss()
-//                }){
-//                    Text("閉じる")
-//                }
-//                .padding()
-//                Spacer()
-//                Text("チュートリアル")
-//                Spacer()
-//                Text("")
-//                Spacer()
-//            }
-//            .background(Color(red: 0.2, green: 0.68, blue: 0.9, opacity: 1.0))
-//            .foregroundColor(.white)
-//            Spacer()
-//            VStack{
-//                Image("チュートリアル４")
-//                    .resizable()
-//                    .scaledToFit()
-//                //.frame(width: 500, height: 500)
-//
-//            }
-//            .padding(.top,40)
-//            Spacer()
-//            VStack{
-//                Text("現在の目標に対する合計記録時間と今回の記録時間が表示されます。")
-//                Text("もし記録に関するメモがあれば、入力してください。最後に、戻るボタンをクリックして積み上げ記録の追加を完了させます。")
-//            }
-//            .padding()
-//            .padding(.bottom,10)
-//        }
-//    }
-//}
-
 
 struct HelpView_Previews: PreviewProvider {
     static var previews: some View {

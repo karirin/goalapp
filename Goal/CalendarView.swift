@@ -162,12 +162,14 @@ struct CalendarTestView: View {
     var body: some View {
         VStack{
             HStack{
-                Text("")
+                HelpView1()
+                    .opacity(0)
                 Spacer()
                 Text("\(viewModel.selectedYear)年\(viewModel.selectedMonth)月")
                     .fontWeight(.bold) // <- Change this line
                 Spacer()
-                Text("")
+                HelpView2()
+                    .foregroundColor(.black)
             }
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))

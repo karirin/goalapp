@@ -381,7 +381,7 @@ struct FourthPage: View {
     @Binding var goal: String
     @Binding var date: Date
     @Binding var milestones: [Milestone]
-    @State private var rewards: [Reward] = [Reward(name: "", progress: 0)]
+    @State private var rewards: [Reward] = [Reward(name: "", progress: 10)]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let ref = Database.database().reference()
     @EnvironmentObject var router: NavigationRouter
@@ -409,7 +409,7 @@ struct FourthPage: View {
         _goal = goal
         _date = date
         _milestones = milestones
-        _rewards = State(initialValue: [Reward(name: "", progress: 0)])
+        _rewards = State(initialValue: [Reward(name: "", progress: 10)])
     }
     
     private var isRewardValid: Bool {

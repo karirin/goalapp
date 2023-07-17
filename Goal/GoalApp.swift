@@ -29,7 +29,11 @@ struct GoalApp: App {
         WindowGroup {
             if appState.isLoading {
                 // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
-                LoadingView(3)
+                ZStack {
+                LoadingView()
+                        .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
+                        .position(x: UIScreen.main.bounds.width / 1.8, y: UIScreen.main.bounds.height / 2.2)  // ローディングビューを画面の中央に配置します。
+                }
             } else if appState.hasPosts {
                 // If there are posts, display the TopView
                 TopView()

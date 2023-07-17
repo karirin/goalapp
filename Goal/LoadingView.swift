@@ -8,24 +8,30 @@
 import SwiftUI
 
 struct LoadingView: View {
-    private let scaleEffect: CGFloat
+    @State private var isAnimating = false
 
-    init(_ scaleEffect: CGFloat) {
-        self.scaleEffect = scaleEffect
-    }
-    
     var body: some View {
-        VStack {
-            ProgressView() // This displays a spinning progress indicator.
-                .progressViewStyle(.circular)
-                .scaleEffect(scaleEffect)
-                .frame(width: scaleEffect * 20, height: scaleEffect * 20)
+        GeometryReader { geometry in
+            ForEach(0..<5) { index in
+                Circle()
+                    .trim(from: 0.0, to: 0.6)
+                    .stroke(Color.red, lineWidth: 8)
+                    .frame(width: geometry.size.width / 2, height: geometry.size.height / 2)
+                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+                    .animation(Animation.timingCurve(0.6, 0.25 + Double(index) / 6.0, 0.25, 0.4, duration: 1.3)
+                        .repeatForever(autoreverses: false))
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .onAppear {
+            self.isAnimating = true
         }
     }
 }
 
+
 struct LoadingView_Previews: PreviewProvider {
     static var previews: some View {
-        LoadingView(3)
+        LoadingView()
     }
 }

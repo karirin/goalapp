@@ -50,8 +50,6 @@ struct SwipeableView4: View {
             TabView(selection: $selectedTab) {
                 FirstView4()
                     .tag(0)
-                SecondView4()
-                    .tag(1)
 //                ThirdView()
 //                    .tag(2)
 //                FourthView()
@@ -60,8 +58,8 @@ struct SwipeableView4: View {
             .tabViewStyle(PageTabViewStyle())
             
             
-            CustomPageIndicator(numberOfPages: 4, currentPage: $selectedTab)
-                .padding(.bottom)
+            //CustomPageIndicator(numberOfPages: 4, currentPage: $selectedTab)
+                //.padding(.bottom)
         }
     }
 }
@@ -97,13 +95,18 @@ struct FirstView4: View {
                 Spacer()
                 Text("チュートリアル")
                 Spacer()
-                Text("")
+                Button(action:{
+                    presentationMode.wrappedValue.dismiss()
+                }){
+                    Text("閉じる")
+                }
+                .opacity(0)
                 Spacer()
             }
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
             Spacer()
-            Image("チュートリアル４")
+            Image("チュートリアル７")
                 .resizable()
                 .scaledToFit()
             Spacer()

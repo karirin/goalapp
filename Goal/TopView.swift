@@ -25,38 +25,38 @@ struct TopView: View {
         } else {
             VStack {
                 TabView(selection: $selectedTab) {  // <- Add "selection: $selectedTab"
-                    ZStack {
+//                    ZStack {
                         ContentView()
                             .environmentObject(viewModel)
                             .tag(0)  // <- Add this line
-                        VStack {
-                            HStack {
-                                Spacer()
-                                HelpView1()
-                                    .padding(.trailing, 15)
-//                                    .padding(.top)
-                            }
-                            Spacer()
-                        }
-                    }
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView1()
+//                                    .padding(.trailing, 15)
+////                                    .padding(.top)
+//                            }
+//                            Spacer()
+//                        }
+//                    }
                         .tabItem {
                             Image(systemName: "house")
                             Text("ホーム")
                         }
                     
-                    ZStack {
+//                    ZStack {
                         CalendarTestView()
                             .tag(1)  // <- Add this line
-                        VStack {
-                            HStack {
-                                Spacer()
-                                HelpView2()
-                                    .padding(.trailing, 10)
-                                    .padding(.top,10)
-                            }
-                            Spacer()
-                        }
-                    }
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView2()
+//                                    .padding(.trailing, 10)
+//                                    .padding(.top,10)
+//                            }
+//                            Spacer()
+//                        }
+//                    }
                         .tabItem {
                             Image(systemName: "calendar")
                             Text("カレンダー")

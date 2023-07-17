@@ -45,12 +45,14 @@ struct ProgressRingView: View {
     var body: some View {
         VStack{
             HStack{
-                Text("")
+                HelpView1()
+                    .opacity(0)
                 Spacer()
                 Text("目標")
                     .fontWeight(.bold) // <- Change this line
                 Spacer()
-                Text("")
+                HelpView1()
+                    .foregroundColor(.black)
             }
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
@@ -196,7 +198,11 @@ struct ContentView: View {
                     )
                 } else {
                     // Display a loading indicator or placeholder here
-                    LoadingView(3)
+                    ZStack {
+                    LoadingView()
+                            .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
+                            .position(x: UIScreen.main.bounds.width / 1.8, y: UIScreen.main.bounds.height / 2.2)  // ローディングビューを画面の中央に配置します。
+                    }
                 }
             }
             .onAppear {

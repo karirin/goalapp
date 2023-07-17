@@ -212,9 +212,11 @@ struct ChartView: View {
         let groupedGoals = viewModel.intermediateGoals.chunked(into: 2)
         VStack{
             HStack{
-                Text("")
+                HelpView1()
+                    .opacity(0)
                 Spacer()
                 Image(systemName: "chevron.left")
+                    .fontWeight(.bold)
                     .onTapGesture {
                         // 「<」をクリックしたときのアクション
                         // 選択した月を一つ減らす
@@ -226,6 +228,7 @@ struct ChartView: View {
                         viewModel.selectedMonth = String(format: "%02d", newMonth)
                     }
                 Text("\(viewModel.selectedYear)年\(viewModel.selectedMonth)月")
+                    .fontWeight(.bold)
                     .onReceive(viewModel.$selectedYear) { _ in // selectedYearが変わるたびに呼ばれる
                         viewModel.fetchGoal(){
                             
@@ -233,6 +236,7 @@ struct ChartView: View {
                     }
                     .padding(.horizontal)
                 Image(systemName: "chevron.right")
+                    .fontWeight(.bold)
                     .onTapGesture {
                         // 「>」をクリックしたときのアクション
                         // 選択した月を一つ増やす
@@ -244,13 +248,14 @@ struct ChartView: View {
                         viewModel.selectedMonth = String(format: "%02d", newMonth)
                     }
                 Spacer()
-                Text("")
+            //Text("")
+                HelpView3()
+                    .foregroundColor(.black)
             }
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
             .foregroundColor(.white)
             .frame(height:50)
-            .fontWeight(.bold)
             .font(.system(size: 20))
             VStack {
                 // 必要に応じて条件を設けてチャートを描画する
