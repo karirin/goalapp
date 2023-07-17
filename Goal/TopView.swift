@@ -14,6 +14,8 @@ struct TopView: View {
     @State private var selectedTab = 0  // <- Add this line
     @StateObject var router = NavigationRouter()
     @StateObject var appState = AppState()
+    @State private var showingNotificationView = false
+
     
     var body: some View {
         if viewModel.showRootView {
@@ -23,31 +25,77 @@ struct TopView: View {
         } else {
             VStack {
                 TabView(selection: $selectedTab) {  // <- Add "selection: $selectedTab"
-                    ContentView()
-                        .environmentObject(viewModel)
-                        .tag(0)  // <- Add this line
+                    ZStack {
+                        ContentView()
+                            .environmentObject(viewModel)
+                            .tag(0)  // <- Add this line
+                        VStack {
+                            HStack {
+                                Spacer()
+                                HelpView1()
+                                    .padding(.trailing, 15)
+//                                    .padding(.top)
+                            }
+                            Spacer()
+                        }
+                    }
                         .tabItem {
                             Image(systemName: "house")
                             Text("ホーム")
                         }
-                    CalendarTestView()
-                        .tag(1)  // <- Add this line
+                    
+                    ZStack {
+                        CalendarTestView()
+                            .tag(1)  // <- Add this line
+                        VStack {
+                            HStack {
+                                Spacer()
+                                HelpView2()
+                                    .padding(.trailing, 10)
+                                    .padding(.top,10)
+                            }
+                            Spacer()
+                        }
+                    }
                         .tabItem {
                             Image(systemName: "calendar")
                             Text("カレンダー")
                         }
-                    ChartView()
-                        .tag(2)  // <- Add this line
+//                    }
+//                    ZStack {
+                        ChartView()
+                            .tag(2)  // <- Add this line
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView3()
+//                                    .padding(.trailing, 10)
+//                                    .padding(.top,10)
+//                            }
+//                            Spacer()
+//                        }
                         .tabItem {
                             Image(systemName: "chart.xyaxis.line")
                             Text("グラフ")
                         }
-                    RewardsView()
-                        .tag(3)
+//                    }
+//                    ZStack {
+                        RewardsView()
+                            .tag(3)
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView4()
+//                                    .padding(.trailing, 10)
+//                                    .padding(.top,10)
+//                            }
+//                            Spacer()
+//                        }
                         .tabItem {
                             Image(systemName: "gift")
                             Text("ご褒美")
                         }
+//                    }
                     SettingsView()
                         .tag(4)
                         .tabItem {

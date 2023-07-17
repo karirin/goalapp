@@ -28,7 +28,7 @@ struct GoalApp: App {
     var body: some Scene {
         WindowGroup {
             if appState.isLoading {
-                // Display a loading view while data is loading
+                // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
                 LoadingView(3)
             } else if appState.hasPosts {
                 // If there are posts, display the TopView

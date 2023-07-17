@@ -200,8 +200,10 @@ struct ContentView: View {
                 }
             }
             .onAppear {
-                viewModel.fetchGoal(){
-                    
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    viewModel.fetchGoal(){
+
+                    }
                 }
             }
     }

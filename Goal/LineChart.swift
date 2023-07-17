@@ -102,8 +102,11 @@ struct LineChart : UIViewRepresentable {
 
         // Y軸の最大値も更新します
         uiView.leftAxis.axisMaximum = newMaxYValue
+
+        // ビューに再描画を要求します
+        uiView.setNeedsDisplay()
     }
-    
+
     func setData() -> (LineChartData, Double) {
         var dataSets: [LineChartDataSet] = []
         let colors: [NSUIColor] = [.red, .blue, .green, .orange, .purple, .cyan] // 線ごとの色設定
@@ -144,7 +147,7 @@ struct LineChart : UIViewRepresentable {
                     print("value: \(value)")
                     // 最大値を更新
                     if value > maxValue {
-                        maxValue = value
+                        maxValue = value * 1.1
                         print("maxValue updated: \(maxValue)")
                     }
 

@@ -189,22 +189,37 @@ struct CalendarTestView: View {
                     .padding(.leading,15)
                     .padding(.bottom,5)
                     if viewModel.selectedDateType == .goalAchievement {
-                        Text("Goal achievement date selected")
+                        VStack{
+                            HStack{
+                                Text(" ")
+                                    .frame(width:5,height: 20)
+                                    .background(Color(red: 0.99, green: 0.4, blue: 0.4, opacity: 1.0))
+                                Text("目標の達成日です")
+                                Spacer()
+                            }
+                        }
+                        .font(.system(size: 20))
+                        .padding(.horizontal)
+                        .padding(.bottom,5)
                     } else if viewModel.selectedDateType == .intermediateGoal {
                         if let intermediateGoal = viewModel.intermediateGoals.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate!) }) {
-                            VStack{
-                                HStack{
-                                    Text("中間目標")
-                                    Spacer()
+                                VStack{
+                                    HStack{
+                                        Text(" ")
+                                            .frame(width:5,height: 20)
+                                            .background(Color(red: 0.99, green: 0.4, blue: 0.4, opacity: 1.0))
+                                        Text("中間目標")
+                                        Spacer()
+                                    }
+                                    HStack{
+                                        Text("\(intermediateGoal.goal)")
+                                        Text("の達成日です")
+                                        Spacer()
+                                    }
                                 }
-                                .padding(.leading,50)
-                                Text("\(intermediateGoal.goal)")
-                                HStack{
-                                    Spacer()
-                                    Text("の達成日です")
-                                }
-                                .padding(.trailing,20)
-                            }
+                                .font(.system(size: 20))
+                                .padding(.horizontal)
+                                .padding(.bottom,5)
                         }
                     }
 
@@ -222,7 +237,7 @@ struct CalendarTestView: View {
                         .padding(.bottom,5)
                     }
                     Spacer()
-                }.frame(height: 200)
+                }.frame(height: 100)
             }
         }.onAppear {
             viewModel.fetchGoal() {

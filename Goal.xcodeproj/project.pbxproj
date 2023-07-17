@@ -15,6 +15,7 @@
 		266808182A5C48080067464B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266808172A5C48080067464B /* LoadingView.swift */; };
 		26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A2F5F12A30C79B003AA1D7 /* PostView.swift */; };
 		26A2F5F62A3177A9003AA1D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */; };
+		26A4CDDD2A62CC9F00F318F0 /* HelpView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */; };
 		26A52F452A4EF380003BE6DD /* ProgressCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A52F442A4EF380003BE6DD /* ProgressCircleView.swift */; };
 		26A5B3602A2F66AD007C958E /* GoalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A5B35F2A2F66AD007C958E /* GoalApp.swift */; };
 		26A5B3622A2F66AD007C958E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A5B3612A2F66AD007C958E /* ContentView.swift */; };
@@ -26,6 +27,9 @@
 		26AC0A142A4804E8003CF236 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AC0A132A4804E7003CF236 /* TestView.swift */; };
 		26BF4A502A31A2E6004E3CBC /* GoalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */; };
 		26BF4A522A31F764004E3CBC /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BF4A512A31F764004E3CBC /* AuthManager.swift */; };
+		26E77DF42A63BD4F0044FDFE /* HelpView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E77DF32A63BD4F0044FDFE /* HelpView2.swift */; };
+		26E77DF62A63D0510044FDFE /* HelpView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E77DF52A63D0510044FDFE /* HelpView3.swift */; };
+		26E77DF82A63D0950044FDFE /* HelpView4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E77DF72A63D0950044FDFE /* HelpView4.swift */; };
 		43C0BB8073CE9EB4A3CC5E90 /* Pods_Goal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30D914CFAFFBD63EE7DB68E1 /* Pods_Goal.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +42,7 @@
 		266808172A5C48080067464B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		26A2F5F12A30C79B003AA1D7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpView1.swift; sourceTree = "<group>"; };
 		26A52F442A4EF380003BE6DD /* ProgressCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCircleView.swift; sourceTree = "<group>"; };
 		26A5B35C2A2F66AD007C958E /* Goal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26A5B35F2A2F66AD007C958E /* GoalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalApp.swift; sourceTree = "<group>"; };
@@ -49,6 +54,9 @@
 		26AC0A132A4804E7003CF236 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		26BF4A4F2A31A2E6004E3CBC /* GoalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalViewModel.swift; sourceTree = "<group>"; };
 		26BF4A512A31F764004E3CBC /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		26E77DF32A63BD4F0044FDFE /* HelpView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView2.swift; sourceTree = "<group>"; };
+		26E77DF52A63D0510044FDFE /* HelpView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView3.swift; sourceTree = "<group>"; };
+		26E77DF72A63D0950044FDFE /* HelpView4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView4.swift; sourceTree = "<group>"; };
 		30D914CFAFFBD63EE7DB68E1 /* Pods_Goal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Goal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		465982B3B6C9BA27886463A7 /* Pods-Goal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Goal.debug.xcconfig"; path = "Target Support Files/Pods-Goal/Pods-Goal.debug.xcconfig"; sourceTree = "<group>"; };
 		7F490A6813004A3D0F7D9144 /* Pods-Goal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Goal.release.xcconfig"; path = "Target Support Files/Pods-Goal/Pods-Goal.release.xcconfig"; sourceTree = "<group>"; };
@@ -97,6 +105,10 @@
 				26AC0A0E2A47F967003CF236 /* LineChart.swift */,
 				26A2F5F12A30C79B003AA1D7 /* PostView.swift */,
 				26AC0A132A4804E7003CF236 /* TestView.swift */,
+				26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */,
+				26E77DF32A63BD4F0044FDFE /* HelpView2.swift */,
+				26E77DF52A63D0510044FDFE /* HelpView3.swift */,
+				26E77DF72A63D0950044FDFE /* HelpView4.swift */,
 				2639963C2A342BD400E03508 /* TopView.swift */,
 				2639963E2A342C9000E03508 /* SettingView.swift */,
 				26A5B36D2A2F671F007C958E /* CalendarView.swift */,
@@ -259,7 +271,9 @@
 				2639963D2A342BD400E03508 /* TopView.swift in Sources */,
 				26A5B3622A2F66AD007C958E /* ContentView.swift in Sources */,
 				263996412A342CC500E03508 /* PrivacyView.swift in Sources */,
+				26E77DF42A63BD4F0044FDFE /* HelpView2.swift in Sources */,
 				26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */,
+				26E77DF62A63D0510044FDFE /* HelpView3.swift in Sources */,
 				26A5B3602A2F66AD007C958E /* GoalApp.swift in Sources */,
 				263996452A367E9700E03508 /* RewardsView.swift in Sources */,
 				263996432A342CF000E03508 /* TermsOfServiceView.swift in Sources */,
@@ -269,8 +283,10 @@
 				26BF4A502A31A2E6004E3CBC /* GoalViewModel.swift in Sources */,
 				26A52F452A4EF380003BE6DD /* ProgressCircleView.swift in Sources */,
 				26BF4A522A31F764004E3CBC /* AuthManager.swift in Sources */,
+				26A4CDDD2A62CC9F00F318F0 /* HelpView1.swift in Sources */,
 				26AC0A142A4804E8003CF236 /* TestView.swift in Sources */,
 				26AC0A0F2A47F967003CF236 /* LineChart.swift in Sources */,
+				26E77DF82A63D0950044FDFE /* HelpView4.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
