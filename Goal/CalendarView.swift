@@ -173,7 +173,7 @@ struct CalendarTestView: View {
             }
             .padding()
             .background(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
-            //.foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
+            //.foreg#imageLiteral(resourceName: "simulator_screenshot_E42C4851-146E-4DC5-80C3-B2DECEBF2689.png")roundColor(Color(red: 0.1, green: 0.1, blue: 0.1, opacity: 0.8))
             .foregroundColor(.white)
             .frame(height:50)
             .font(.system(size: 20))

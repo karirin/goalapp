@@ -14,11 +14,12 @@ struct LoadingView: View {
         GeometryReader { geometry in
             ForEach(0..<5) { index in
                 Circle()
-                    .trim(from: 0.0, to: 0.6)
-                    .stroke(Color.red, lineWidth: 8)
+                    .trim(from: 0.0, to: 0.1)
+                    .stroke(Color.red, lineWidth: 4)
                     .frame(width: geometry.size.width / 2, height: geometry.size.height / 2)
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                    .animation(Animation.timingCurve(0.6, 0.25 + Double(index) / 6.0, 0.25, 0.4, duration: 1.3)
+                    .animation(Animation.timingCurve(0.9, 0.25 + Double(index) / 5.0, 0.25, 1.0, duration: 2.3)
+//                        .animation(Animation.linear(duration: 1.0)
                         .repeatForever(autoreverses: false))
             }
         }

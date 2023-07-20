@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseDatabase
 import UIKit
+import StoreKit
 
 struct TopView: View {
     @EnvironmentObject private var viewModel: GoalViewModel
@@ -104,6 +105,17 @@ struct TopView: View {
                         }
                 }
             }
+        }
+    }
+}
+
+func promptForReview() {
+    let launchCount = UserDefaults.standard.integer(forKey: "launchCount") + 1
+    UserDefaults.standard.set(launchCount, forKey: "launchCount")
+    
+    if launchCount % 5 == 0 {
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
         }
     }
 }
