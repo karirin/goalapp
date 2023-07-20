@@ -517,11 +517,7 @@ struct FourthPage: View {
                             "progress_rate": 0] as [String : Any]
                 // Firebase Realtime Databaseに保存
                 let childUpdates = ["/posts/\(postID)": post]
-                ref.updateChildValues(childUpdates, withCompletionBlock: { error, ref in
-                    // Transition to ContentView
-                    self.presentationMode.wrappedValue.dismiss()
-                    router.currentPage = .content
-                })
+                ref.updateChildValues(childUpdates)
 
                 // Transition to ContentView
                 self.presentationMode.wrappedValue.dismiss()
