@@ -29,17 +29,7 @@ struct TopView: View {
 //                    ZStack {
                         ContentView()
                             .environmentObject(viewModel)
-                            .tag(0)  // <- Add this line
-//                        VStack {
-//                            HStack {
-//                                Spacer()
-//                                HelpView1()
-//                                    .padding(.trailing, 15)
-////                                    .padding(.top)
-//                            }
-//                            Spacer()
-//                        }
-//                    }
+                            .tag(0) 
                         .tabItem {
                             Image(systemName: "house")
                             Text("ホーム")

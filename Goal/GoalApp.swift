@@ -32,14 +32,12 @@ struct GoalApp: App {
                 ZStack {
                 LoadingView()
                         .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
-                        .position(x: UIScreen.main.bounds.width / 1.8, y: UIScreen.main.bounds.height / 2.2)  // ローディングビューを画面の中央に配置します。
+                        .position(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.2) // ローディングビューを画面の中央に配置します。
                 }
             } else if appState.hasPosts {
-                // If there are posts, display the TopView
-                TopView()
-                    .environmentObject(GoalViewModel())
+                    TopView()
+                        .environmentObject(GoalViewModel())
             } else {
-                // If there are no posts, display the PostView
                 RootView()
                     .environmentObject(router)
                     .environmentObject(appState)

@@ -13,6 +13,7 @@
 		263996432A342CF000E03508 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996422A342CF000E03508 /* TermsOfServiceView.swift */; };
 		263996452A367E9700E03508 /* RewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996442A367E9700E03508 /* RewardsView.swift */; };
 		266808182A5C48080067464B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266808172A5C48080067464B /* LoadingView.swift */; };
+		269A9FAF2A697171003446CC /* HugginFaceProgressCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269A9FAE2A697171003446CC /* HugginFaceProgressCircle.swift */; };
 		26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A2F5F12A30C79B003AA1D7 /* PostView.swift */; };
 		26A2F5F62A3177A9003AA1D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */; };
 		26A4CDDD2A62CC9F00F318F0 /* HelpView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */; };
@@ -40,6 +41,7 @@
 		263996422A342CF000E03508 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		263996442A367E9700E03508 /* RewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsView.swift; sourceTree = "<group>"; };
 		266808172A5C48080067464B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		269A9FAE2A697171003446CC /* HugginFaceProgressCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HugginFaceProgressCircle.swift; sourceTree = "<group>"; };
 		26A2F5F12A30C79B003AA1D7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		26A2F5F52A3177A8003AA1D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpView1.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				26AC0A0E2A47F967003CF236 /* LineChart.swift */,
 				26A2F5F12A30C79B003AA1D7 /* PostView.swift */,
 				26AC0A132A4804E7003CF236 /* TestView.swift */,
+				269A9FAE2A697171003446CC /* HugginFaceProgressCircle.swift */,
 				26A4CDDC2A62CC9E00F318F0 /* HelpView1.swift */,
 				26E77DF32A63BD4F0044FDFE /* HelpView2.swift */,
 				26E77DF52A63D0510044FDFE /* HelpView3.swift */,
@@ -285,6 +288,7 @@
 				26BF4A522A31F764004E3CBC /* AuthManager.swift in Sources */,
 				26A4CDDD2A62CC9F00F318F0 /* HelpView1.swift in Sources */,
 				26AC0A142A4804E8003CF236 /* TestView.swift in Sources */,
+				269A9FAF2A697171003446CC /* HugginFaceProgressCircle.swift in Sources */,
 				26AC0A0F2A47F967003CF236 /* LineChart.swift in Sources */,
 				26E77DF82A63D0950044FDFE /* HelpView4.swift in Sources */,
 			);
@@ -414,7 +418,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_ASSET_PATHS = "\"Goal/Preview Content\"";
 				DEVELOPMENT_TEAM = F3XS565TSX;
 				ENABLE_PREVIEWS = YES;
@@ -428,7 +432,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Beginners-app.Goal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -444,7 +448,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_ASSET_PATHS = "\"Goal/Preview Content\"";
 				DEVELOPMENT_TEAM = F3XS565TSX;
 				ENABLE_PREVIEWS = YES;
@@ -458,7 +462,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Beginners-app.Goal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

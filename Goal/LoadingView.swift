@@ -9,23 +9,43 @@ import SwiftUI
 
 struct LoadingView: View {
     @State private var isAnimating = false
+    @State private var rotationDegrees: [Double] = [0, 0, 0]
+    @State private var startTrim: [CGFloat] = [0, 0, 0]
+    @State private var trimTo: CGFloat = 120.0 / 360.0
+    @State private var shouldRotate = true
+    @State private var opacity = 1.0
+
+    let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+
+    @State private var percentage: Int = 0
+    let timer2 = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
+
+    @State private var expandGreenCircle = false
 
     var body: some View {
         GeometryReader { geometry in
-            ForEach(0..<5) { index in
+            ForEach(0..<1) { index in
                 Circle()
-                    .trim(from: 0.0, to: 0.1)
-                    .stroke(Color.red, lineWidth: 4)
-                    .frame(width: geometry.size.width / 2, height: geometry.size.height / 2)
-                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                    .animation(Animation.timingCurve(0.9, 0.25 + Double(index) / 5.0, 0.25, 1.0, duration: 2.3)
-//                        .animation(Animation.linear(duration: 1.0)
-                        .repeatForever(autoreverses: false))
+                    .trim(from: 0, to: 0.9)
+                    .stroke(lineWidth: 3)
+                    .frame(width: CGFloat(100 + 30 * index), height: CGFloat(100 + 30 * index))
+                    .foregroundColor(Color(red: 1, green: 0.4, blue: 0.4, opacity: 0.8))
+                    .rotationEffect(Angle.degrees(CGFloat(index*50)+rotationDegrees[index]))
+                    .animation(shouldRotate ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default)
+                    .opacity(opacity)
             }
         }
-        .aspectRatio(1, contentMode: .fit)
-        .onAppear {
-            self.isAnimating = true
+        .onAppear() {
+            startTrim = startTrim.map { _ in CGFloat.random(in: 0...1) }
+        }
+        .onReceive(timer) { _ in
+            if shouldRotate {
+                withAnimation(Animation.linear(duration: 1).repeatForever(autoreverses: false)) {
+                    rotationDegrees = rotationDegrees.enumerated().map { index, degree in
+                        degree + (30.0 * Double(1 - Double(index) * 0.2))
+                    }
+                }
+            }
         }
     }
 }
