@@ -87,6 +87,7 @@ class AppState: ObservableObject {
 
     init() {
         guard let currentUserId = Auth.auth().currentUser?.uid else {
+            self.isLoading = false
             return
         }
 

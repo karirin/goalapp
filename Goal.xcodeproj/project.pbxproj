@@ -12,6 +12,8 @@
 		263996412A342CC500E03508 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996402A342CC500E03508 /* PrivacyView.swift */; };
 		263996432A342CF000E03508 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996422A342CF000E03508 /* TermsOfServiceView.swift */; };
 		263996452A367E9700E03508 /* RewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263996442A367E9700E03508 /* RewardsView.swift */; };
+		2664E6DF2AE4CC2D004C71BD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2664E6DE2AE4CC2D004C71BD /* StoreKit.framework */; };
+		2664E6E12AE51A5F004C71BD /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2664E6E02AE51A5F004C71BD /* SubscriptionView.swift */; };
 		266808182A5C48080067464B /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 266808172A5C48080067464B /* LoadingView.swift */; };
 		269A9FAF2A697171003446CC /* HugginFaceProgressCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269A9FAE2A697171003446CC /* HugginFaceProgressCircle.swift */; };
 		26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A2F5F12A30C79B003AA1D7 /* PostView.swift */; };
@@ -40,6 +42,8 @@
 		263996402A342CC500E03508 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		263996422A342CF000E03508 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		263996442A367E9700E03508 /* RewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsView.swift; sourceTree = "<group>"; };
+		2664E6DE2AE4CC2D004C71BD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		2664E6E02AE51A5F004C71BD /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		266808172A5C48080067464B /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		269A9FAE2A697171003446CC /* HugginFaceProgressCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HugginFaceProgressCircle.swift; sourceTree = "<group>"; };
 		26A2F5F12A30C79B003AA1D7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2664E6DF2AE4CC2D004C71BD /* StoreKit.framework in Frameworks */,
 				43C0BB8073CE9EB4A3CC5E90 /* Pods_Goal.framework in Frameworks */,
 				26AC0A122A47FFBD003CF236 /* SwiftUICharts in Frameworks */,
 			);
@@ -114,6 +119,7 @@
 				26E77DF72A63D0950044FDFE /* HelpView4.swift */,
 				2639963C2A342BD400E03508 /* TopView.swift */,
 				2639963E2A342C9000E03508 /* SettingView.swift */,
+				2664E6E02AE51A5F004C71BD /* SubscriptionView.swift */,
 				26A5B36D2A2F671F007C958E /* CalendarView.swift */,
 				263996402A342CC500E03508 /* PrivacyView.swift */,
 				263996422A342CF000E03508 /* TermsOfServiceView.swift */,
@@ -136,6 +142,7 @@
 		5A73B5B2EA734C5AFEE71D8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2664E6DE2AE4CC2D004C71BD /* StoreKit.framework */,
 				30D914CFAFFBD63EE7DB68E1 /* Pods_Goal.framework */,
 			);
 			name = Frameworks;
@@ -276,6 +283,7 @@
 				263996412A342CC500E03508 /* PrivacyView.swift in Sources */,
 				26E77DF42A63BD4F0044FDFE /* HelpView2.swift in Sources */,
 				26A2F5F22A30C79B003AA1D7 /* PostView.swift in Sources */,
+				2664E6E12AE51A5F004C71BD /* SubscriptionView.swift in Sources */,
 				26E77DF62A63D0510044FDFE /* HelpView3.swift in Sources */,
 				26A5B3602A2F66AD007C958E /* GoalApp.swift in Sources */,
 				263996452A367E9700E03508 /* RewardsView.swift in Sources */,
@@ -418,11 +426,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"Goal/Preview Content\"";
 				DEVELOPMENT_TEAM = F3XS565TSX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DrawGoal;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -432,7 +441,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Beginners-app.Goal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -448,11 +457,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"Goal/Preview Content\"";
 				DEVELOPMENT_TEAM = F3XS565TSX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DrawGoal;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -462,7 +472,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Beginners-app.Goal";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
