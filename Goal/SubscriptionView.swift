@@ -77,7 +77,7 @@ class ProductCell: UITableViewCell {
 }
 
 func updateSubscriptionStatus() async {
-    var validSubscription: Transaction?
+    var validSubscription: StoreKit.Transaction?
     for await verificationResult in Transaction.currentEntitlements {
         if case .verified(let transaction) = verificationResult,
            transaction.productType == .autoRenewable && !transaction.isUpgraded {
@@ -95,7 +95,7 @@ func updateSubscriptionStatus() async {
 }
 
 
-func purchase(product: Product) async throws -> Transaction  {
+func purchase(product: Product) async throws -> StoreKit.Transaction  {
     // Product.PurchaseResultの取得
     let purchaseResult: Product.PurchaseResult
     do {
@@ -109,7 +109,7 @@ func purchase(product: Product) async throws -> Transaction  {
     }
 
     // VerificationResultの取得
-    let verificationResult: VerificationResult<Transaction>
+    let verificationResult: VerificationResult<StoreKit.Transaction>
     switch purchaseResult {
     case .success(let result):
         verificationResult = result
