@@ -19,6 +19,7 @@ enum SubscribeError: LocalizedError {
 
 class SubscriptionViewModel: ObservableObject {
     @Published var products: [Product] = []
+    @Published var isPrivilegeEnabled: Bool = false
 
     let productIdList = [
         "hogehoge.subscription.matsu",
@@ -34,6 +35,18 @@ class SubscriptionViewModel: ObservableObject {
             }
         } catch {
             print("Failed to load products: \(error)")
+        }
+    }
+    
+    func enablePrivilege(productId: String) {
+        DispatchQueue.main.async {
+            self.isPrivilegeEnabled = true
+        }
+    }
+
+    func disablePrivilege() {
+        DispatchQueue.main.async {
+            self.isPrivilegeEnabled = false
         }
     }
 }
@@ -85,13 +98,13 @@ func updateSubscriptionStatus() async {
         }
     }
 
-    if let productId = validSubscription?.productID {
-        // 特典を付与
-        enablePrivilege(productId: productId)
-    } else {
-        // 特典を削除
-        disablePrivilege()
-    }
+//    if let productId = validSubscription?.productID {
+//        // 特典を付与
+//        enablePrivilege(productId: productId)
+//    } else {
+//        // 特典を削除
+//        disablePrivilege()
+//    }
 }
 
 
@@ -137,16 +150,16 @@ func observeTransactionUpdates() {
                 continue
             }
 
-            if transaction.revocationDate != nil {
-                // 払い戻しされてるので特典削除
-                disablePrivilege()
-            } else if let expirationDate = transaction.expirationDate,
-                      Date() < expirationDate // 有効期限内
-                      && !transaction.isUpgraded // アップグレードされていない
-            {
-                // 有効なサブスクリプションなのでproductIdに対応した特典を有効にする
-                enablePrivilege(productId: transaction.productID)
-            }
+//            if transaction.revocationDate != nil {
+//                // 払い戻しされてるので特典削除
+//                disablePrivilege()
+//            } else if let expirationDate = transaction.expirationDate,
+//                      Date() < expirationDate // 有効期限内
+//                      && !transaction.isUpgraded // アップグレードされていない
+//            {
+//                // 有効なサブスクリプションなのでproductIdに対応した特典を有効にする
+//                enablePrivilege(productId: transaction.productID)
+//            }
 
             await transaction.finish()
         }
@@ -158,16 +171,23 @@ struct SubscriptionView: View {
     @StateObject private var viewModel = SubscriptionViewModel()
 
     var body: some View {
-        List(viewModel.products, id: \.id) { product in
-            VStack(alignment: .leading) {
-                Text(product.displayName)
-                    .font(.headline)
-                Text(product.description)
-                    .font(.subheadline)
-                Text(product.displayPrice)
-                    .font(.subheadline)
-                // Add more UI as needed
+        VStack {
+            List(viewModel.products, id: \.id) { product in
+                VStack(alignment: .leading) {
+                    Text(product.displayName)
+                        .font(.headline)
+                    Text(product.description)
+                        .font(.subheadline)
+                    Text(product.displayPrice)
+                        .font(.subheadline)
+                    // Add more UI as needed
+                }
             }
+            Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
+                .padding()
+                .background(Color.gray.opacity(0.8))
+                .foregroundColor(.white)
+                .cornerRadius(10)
         }
         .onAppear {
             Task {
@@ -176,6 +196,7 @@ struct SubscriptionView: View {
         }
     }
 }
+
 
 struct SubscriptionView_Previews: PreviewProvider {
     static var previews: some View {
