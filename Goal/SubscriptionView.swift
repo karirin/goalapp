@@ -32,6 +32,8 @@ class SubscriptionViewModel: ObservableObject {
             let products = try await Product.products(for: productIdList)
             DispatchQueue.main.async {
                 self.products = products
+                print("self.products")
+                print(self.products)
             }
         } catch {
             print("Failed to load products: \(error)")
@@ -47,6 +49,15 @@ class SubscriptionViewModel: ObservableObject {
     func disablePrivilege() {
         DispatchQueue.main.async {
             self.isPrivilegeEnabled = false
+        }
+    }
+    
+    func purchaseProduct(_ product: Product) async throws {
+        do {
+            let transaction = try await purchase(product: product)
+            print("購入が完了しました: \(transaction)")
+        } catch {
+            print("購入中にエラーが発生しました: \(error)")
         }
     }
 }
@@ -169,29 +180,41 @@ func observeTransactionUpdates() {
 
 struct SubscriptionView: View {
     @StateObject private var viewModel = SubscriptionViewModel()
-
+    
     var body: some View {
         VStack {
             List(viewModel.products, id: \.id) { product in
-                VStack(alignment: .leading) {
-                    Text(product.displayName)
-                        .font(.headline)
-                    Text(product.description)
-                        .font(.subheadline)
-                    Text(product.displayPrice)
-                        .font(.subheadline)
-                    // Add more UI as needed
+                Button(action: {
+                    Task {
+                        do {
+                            try await viewModel.purchaseProduct(product)
+                        } catch {
+                            // ここでエラー処理を行います。
+                            print("購入処理中にエラーが発生しました: \(error)")
+                        }
+                    }
+                }) {
+                    VStack(alignment: .leading) {
+                        Text(product.displayName)
+                            .font(.headline)
+                        Text(product.description)
+                            .font(.subheadline)
+                        Text(product.displayPrice)
+                            .font(.subheadline)
+                    }
                 }
+
+                Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
+                    .padding()
+                    .background(Color.gray.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }
-            Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
-                .padding()
-                .background(Color.gray.opacity(0.8))
-                .foregroundColor(.white)
-                .cornerRadius(10)
-        }
-        .onAppear {
-            Task {
-                await viewModel.loadProducts()
+            .onAppear {
+                Task {
+                    print("test1")
+                    await viewModel.loadProducts()
+                }
             }
         }
     }
