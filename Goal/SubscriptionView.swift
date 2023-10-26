@@ -22,9 +22,7 @@ class SubscriptionViewModel: ObservableObject {
     @Published var isPrivilegeEnabled: Bool = false
 
     let productIdList = [
-        "hogehoge.subscription.matsu",
-        "hogehoge.subscription.take",
-        "hogehoge.subscription.ume",
+        "goalapp",
     ]
 
     func loadProducts() async {
@@ -43,12 +41,16 @@ class SubscriptionViewModel: ObservableObject {
     func enablePrivilege(productId: String) {
         DispatchQueue.main.async {
             self.isPrivilegeEnabled = true
+            print("self.isPrivilegeEnabled")
+            print(self.isPrivilegeEnabled)
         }
     }
 
     func disablePrivilege() {
         DispatchQueue.main.async {
             self.isPrivilegeEnabled = false
+            print("self.isPrivilegeEnabled")
+            print(self.isPrivilegeEnabled)
         }
     }
     
@@ -65,16 +67,22 @@ class SubscriptionViewModel: ObservableObject {
 private func getErrorMessage(error: Error) -> String {
     switch error {
     case SubscribeError.userCancelled:
+        print("ユーザーによって購入がキャンセルされました")
         return "ユーザーによって購入がキャンセルされました"
     case SubscribeError.pending:
+        print("購入が保留されています")
         return "購入が保留されています"
     case SubscribeError.productUnavailable:
+        print("指定した商品が無効です")
         return "指定した商品が無効です"
     case SubscribeError.purchaseNotAllowed:
+        print("OSの支払い機能が無効化されています")
         return "OSの支払い機能が無効化されています"
     case SubscribeError.failedVerification:
         return "トランザクションデータの署名が不正です"
+        print("トランザクションデータの署名が不正です")
     default:
+        print("不明なエラーが発生しました")
         return "不明なエラーが発生しました"
     }
 }
@@ -89,11 +97,13 @@ class ProductCell: UITableViewCell {
     // このプロパティに取得したProductインスタンスをセットする
     var product: Product? {
         didSet {
+            print("ProductCell")
             displayNameLabel.text = product?.displayName
             descriptionLabel.text = product?.description
             displayPriceLabel.text = product?.displayPrice
             periodLabel.text = ""
             if let period = product?.subscription?.subscriptionPeriod {
+                print("period")
                 periodLabel.text = "\(period.value) \(period.unit)"
             }
         }
@@ -102,9 +112,12 @@ class ProductCell: UITableViewCell {
 
 func updateSubscriptionStatus() async {
     var validSubscription: StoreKit.Transaction?
+    print("updateSubscriptionStatus1")
     for await verificationResult in Transaction.currentEntitlements {
+        print("updateSubscriptionStatus2")
         if case .verified(let transaction) = verificationResult,
            transaction.productType == .autoRenewable && !transaction.isUpgraded {
+            print("updateSubscriptionStatus3")
             validSubscription = transaction
         }
     }
@@ -120,15 +133,20 @@ func updateSubscriptionStatus() async {
 
 
 func purchase(product: Product) async throws -> StoreKit.Transaction  {
+    print("purchase1")
     // Product.PurchaseResultの取得
     let purchaseResult: Product.PurchaseResult
     do {
+        print("purchase2")
         purchaseResult = try await product.purchase()
     } catch Product.PurchaseError.productUnavailable {
+        print("purchase3")
         throw SubscribeError.productUnavailable
     } catch Product.PurchaseError.purchaseNotAllowed {
+        print("purchase4")
         throw SubscribeError.purchaseNotAllowed
     } catch {
+        print("purchase5")
         throw SubscribeError.otherError
     }
 
@@ -136,28 +154,38 @@ func purchase(product: Product) async throws -> StoreKit.Transaction  {
     let verificationResult: VerificationResult<StoreKit.Transaction>
     switch purchaseResult {
     case .success(let result):
+        print("purchaseResult1")
         verificationResult = result
     case .userCancelled:
+        print("purchaseResult2")
         throw SubscribeError.userCancelled
     case .pending:
+        print("purchaseResult3")
         throw SubscribeError.pending
     @unknown default:
+        print("purchaseResult4")
         throw SubscribeError.otherError
     }
 
     // Transactionの取得
     switch verificationResult {
     case .verified(let transaction):
+        print("verificationResult1")
         return transaction
     case .unverified:
+        print("verificationResult2")
         throw SubscribeError.failedVerification
     }
 }
 
 func observeTransactionUpdates() {
+    print("observeTransactionUpdates1")
     Task(priority: .background) {
+        print("observeTransactionUpdates2")
         for await verificationResult in Transaction.updates {
+            print("observeTransactionUpdates3")
             guard case .verified(let transaction) = verificationResult else {
+                print("observeTransactionUpdates4")
                 continue
             }
 
@@ -187,6 +215,7 @@ struct SubscriptionView: View {
                 Button(action: {
                     Task {
                         do {
+                            print("test")
                             try await viewModel.purchaseProduct(product)
                         } catch {
                             // ここでエラー処理を行います。
@@ -212,7 +241,6 @@ struct SubscriptionView: View {
             }
             .onAppear {
                 Task {
-                    print("test1")
                     await viewModel.loadProducts()
                 }
             }
