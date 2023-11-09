@@ -37,6 +37,7 @@ struct GoalApp: App {
             } else if appState.hasPosts {
                     TopView()
                         .environmentObject(GoalViewModel())
+//                SubscriptionView()
             } else {
                 RootView()
                     .environmentObject(router)

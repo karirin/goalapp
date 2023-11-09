@@ -86,9 +86,24 @@ struct TopView: View {
                             Image(systemName: "gift")
                             Text("ご褒美")
                         }
+                    SubscriptionView()
+                        .tag(4)
+//                        VStack {
+//                            HStack {
+//                                Spacer()
+//                                HelpView4()
+//                                    .padding(.trailing, 10)
+//                                    .padding(.top,10)
+//                            }
+//                            Spacer()
+//                        }
+                    .tabItem {
+                        Image(systemName: "lane")
+                        Text("サブスクリプション")
+                    }
 //                    }
                     SettingsView()
-                        .tag(4)
+                        .tag(5)
                         .tabItem {
                             Image(systemName: "gearshape.fill")
                             Text("設定")

@@ -212,32 +212,52 @@ struct SubscriptionView: View {
     var body: some View {
         VStack {
             List(viewModel.products, id: \.id) { product in
+                    Text("特典内容：広告を非表示にする")
+                    Text("金額：100円")
+                    Text("期間：1ヶ月")
+                HStack{
+                    Spacer()
+                    Button(action: {
+                        Task {
+                            do {
+                                try await viewModel.purchaseProduct(product)
+                            } catch {
+                                // ここでエラー処理を行います。
+                                print("購入処理中にエラーが発生しました: \(error)")
+                            }
+                        }
+                    }) {
+//                        VStack(alignment: .leading) {
+//                            Text(product.displayName)
+//                                .font(.headline)
+//                            Text(product.description)
+//                                .font(.subheadline)
+//                            Text(product.displayPrice)
+//                                .font(.subheadline)
+//                        }
+                        Text("サブスクリプション登録")
+                    }
+                }
                 Button(action: {
                     Task {
                         do {
-                            print("test")
-                            try await viewModel.purchaseProduct(product)
+//                            try await viewModel.purchaseProduct(product)
+                            try await AppStore.sync()
                         } catch {
                             // ここでエラー処理を行います。
                             print("購入処理中にエラーが発生しました: \(error)")
                         }
                     }
                 }) {
-                    VStack(alignment: .leading) {
-                        Text(product.displayName)
-                            .font(.headline)
-                        Text(product.description)
-                            .font(.subheadline)
-                        Text(product.displayPrice)
-                            .font(.subheadline)
-                    }
+                    Text("購入の復元")
                 }
+            
 
-                Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
-                    .padding()
-                    .background(Color.gray.opacity(0.8))
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+//                Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
+//                    .padding()
+//                    .background(Color.gray.opacity(0.8))
+//                    .foregroundColor(.white)
+//                    .cornerRadius(10)
             }
             .onAppear {
                 Task {
