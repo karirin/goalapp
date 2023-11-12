@@ -103,7 +103,6 @@ class ProductCell: UITableViewCell {
             displayPriceLabel.text = product?.displayPrice
             periodLabel.text = ""
             if let period = product?.subscription?.subscriptionPeriod {
-                print("period")
                 periodLabel.text = "\(period.value) \(period.unit)"
             }
         }
@@ -243,6 +242,7 @@ struct SubscriptionView: View {
                         do {
 //                            try await viewModel.purchaseProduct(product)
                             try await AppStore.sync()
+                            try await viewModel.purchaseProduct(product)
                         } catch {
                             // ここでエラー処理を行います。
                             print("購入処理中にエラーが発生しました: \(error)")
