@@ -10,6 +10,7 @@ target 'Goal' do
   pod 'Firebase/Database'
   pod 'Firebase/Auth'
   pod 'Charts'
+  pod 'Google-Mobile-Ads-SDK'
 end
 
 post_install do |installer|

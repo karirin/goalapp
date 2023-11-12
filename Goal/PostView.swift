@@ -84,6 +84,7 @@ class AppState: ObservableObject {
     @Published var hasPosts: Bool = false
     @Published var isLoading: Bool = true
     // Add other states as needed
+    @Published var isBannerVisible = true // ここに移動
 
     init() {
         guard let currentUserId = Auth.auth().currentUser?.uid else {

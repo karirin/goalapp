@@ -207,6 +207,7 @@ func observeTransactionUpdates() {
 
 struct SubscriptionView: View {
     @StateObject private var viewModel = SubscriptionViewModel()
+    @StateObject var appState = AppState()
     
     var body: some View {
         VStack {
@@ -242,7 +243,7 @@ struct SubscriptionView: View {
                         do {
 //                            try await viewModel.purchaseProduct(product)
                             try await AppStore.sync()
-                            try await viewModel.purchaseProduct(product)
+                            appState.isBannerVisible = false
                         } catch {
                             // ここでエラー処理を行います。
                             print("購入処理中にエラーが発生しました: \(error)")

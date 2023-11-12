@@ -8,10 +8,12 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
+      GADMobileAds.sharedInstance().start(completionHandler: nil)
       if FirebaseApp.app() == nil {
           FirebaseApp.configure()
       }
@@ -35,6 +37,10 @@ struct GoalApp: App {
                         .position(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.2) // ローディングビューを画面の中央に配置します。
                 }
             } else if appState.hasPosts {
+                if appState.isBannerVisible {
+                    BannerView()
+                        .frame(height: 60)
+                }
                     TopView()
                         .environmentObject(GoalViewModel())
 //                SubscriptionView()
