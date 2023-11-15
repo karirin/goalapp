@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 import GoogleMobileAds
+import StoreKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
@@ -17,8 +18,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       if FirebaseApp.app() == nil {
           FirebaseApp.configure()
       }
+      // アプリ起動時に実行
+      Task {
+          await checkSubscriptionStatus()
+      }
       return true
   }
+    
+    func checkSubscriptionStatus() async {
+        let transactions = await Transaction.currentEntitlements
+        let isSubscribed = transactions.contains { $0.productType == .autoRenewable } // 修正された部分
+
+        DispatchQueue.main.async {
+            // AppStateの更新
+            self.appState.isBannerVisible = !isSubscribed
+        }
+    }
 }
 
 @main
@@ -43,6 +58,7 @@ struct GoalApp: App {
                 }
                     TopView()
                         .environmentObject(GoalViewModel())
+                        .environmentObject(appState)
 //                SubscriptionView()
             } else {
                 RootView()
