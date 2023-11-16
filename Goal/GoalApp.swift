@@ -91,12 +91,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct GoalApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var router = NavigationRouter()
-//    @StateObject var appState = AppState()
+    @StateObject var appState = AppState()
 
     var body: some Scene {
         WindowGroup {
             if FirebaseApp.app() != nil {
-                if appDelegate.appState!.isLoading {
+                if appState.isLoading {
                     // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
                     ZStack {
                         LoadingView()
