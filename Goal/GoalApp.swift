@@ -13,12 +13,13 @@ import StoreKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 //    @EnvironmentObject var appState: AppState
-    let appState = AppState()
+    var appState: AppState?
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
         }
+        appState = AppState()
         DispatchQueue.global(qos: .background).async {
             self.checkSubscription()
         }
@@ -30,7 +31,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             do {
                 let subscribed = try await self.isSubscribed()
                 DispatchQueue.main.async {
-                    self.appState.isBannerVisible = !subscribed
+                    self.appState!.isBannerVisible = !subscribed
                 }
             } catch {
                 print("サブスクリプションの確認中にエラー: \(error)")
@@ -95,26 +96,26 @@ struct GoalApp: App {
     var body: some Scene {
         WindowGroup {
             if FirebaseApp.app() != nil {
-                if appDelegate.appState.isLoading {
+                if let appState = appDelegate.appState {
                     // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
                     ZStack {
                         LoadingView()
                             .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
                             .position(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.2) // ローディングビューを画面の中央に配置します。
                     }
-                } else if appDelegate.appState.hasPosts {
-                    if appDelegate.appState.isBannerVisible {
+                } else if appDelegate.appState!.hasPosts {
+                    if appDelegate.appState!.isBannerVisible {
                         BannerView()
                             .frame(height: 60)
                     }
                     TopView()
                         .environmentObject(GoalViewModel())
-                        .environmentObject(appDelegate.appState)
+                        .environmentObject(appDelegate.appState!)
                     //                SubscriptionView()
                 } else {
                     RootView()
                         .environmentObject(router)
-                        .environmentObject(appDelegate.appState)
+                        .environmentObject(appDelegate.appState!)
                 }
             }
         }
