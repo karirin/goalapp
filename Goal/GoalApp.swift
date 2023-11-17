@@ -96,7 +96,7 @@ struct GoalApp: App {
     var body: some Scene {
         WindowGroup {
             if FirebaseApp.app() != nil {
-                if appState.isLoading {
+                if appDelegate.appState!.isLoading {
                     // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
                     ZStack {
                         LoadingView()
@@ -110,12 +110,12 @@ struct GoalApp: App {
                     }
                     TopView()
                         .environmentObject(GoalViewModel())
-                        .environmentObject(appDelegate.appState!)
+                        .environmentObject(appState)
                     //                SubscriptionView()
                 } else {
                     RootView()
                         .environmentObject(router)
-                        .environmentObject(appDelegate.appState!)
+                        .environmentObject(appState)
                 }
             }
         }
