@@ -91,7 +91,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct GoalApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var router = NavigationRouter()
-    @StateObject var appState = AppState()
+    @EnvironmentObject var appState: AppState
 
     var body: some Scene {
         WindowGroup {
