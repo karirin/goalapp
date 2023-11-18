@@ -223,6 +223,8 @@ struct SubscriptionView: View {
                             do {
                                 try await viewModel.purchaseProduct(product)
                                 appState.isBannerVisible = false
+                                print("サブスクリプション登録 appState.isBannerVisible = false")
+                                print(appState.isBannerVisible)
                             } catch {
                                 // ここでエラー処理を行います。
                                 print("購入処理中にエラーが発生しました: \(error)")
@@ -246,7 +248,7 @@ struct SubscriptionView: View {
 //                            try await viewModel.purchaseProduct(product)
                             try await AppStore.sync()
                             appState.isBannerVisible = false
-                            print("appState.isBannerVisible = false")
+                            print("購入の復元 appState.isBannerVisible = false")
                             print(appState.isBannerVisible)
                         } catch {
                             // ここでエラー処理を行います。
@@ -256,13 +258,6 @@ struct SubscriptionView: View {
                 }) {
                     Text("購入の復元")
                 }
-            
-
-//                Text(viewModel.isPrivilegeEnabled ? "特典が有効です" : "特典が無効です")
-//                    .padding()
-//                    .background(Color.gray.opacity(0.8))
-//                    .foregroundColor(.white)
-//                    .cornerRadius(10)
             }
             .onAppear {
                 Task {
