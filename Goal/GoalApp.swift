@@ -110,12 +110,14 @@ struct GoalApp: App {
                     }
                     TopView()
                         .environmentObject(GoalViewModel())
-                        .environmentObject(appDelegate.appState!)
+//                        .environmentObject(appDelegate.appState!)
+                        .environmentObject(appState)
                     //                SubscriptionView()
                 } else {
                     RootView()
                         .environmentObject(router)
-                        .environmentObject(appDelegate.appState!)
+//                        .environmentObject(appDelegate.appState!)
+                        .environmentObject(appState)
                 }
             }
         }
