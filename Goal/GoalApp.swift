@@ -12,18 +12,17 @@ import GoogleMobileAds
 import StoreKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var appState = AppState()
+    var appState: AppState!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
-//        appState = AppState()
+        FirebaseApp.configure()
+        
+        self.appState = AppState()
         DispatchQueue.global(qos: .background).async {
             self.checkSubscription()
         }
         return true
-     }
+    }
     
     func checkSubscription() {
         Task {
@@ -94,8 +93,7 @@ struct GoalApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if FirebaseApp.app() != nil {
-                let appState = appDelegate.appState
+            if let appState = appDelegate.appState {
                 if appState.isLoading {
                     // Display a loading view while data is#imageLiteral(resourceName: "simulator_screenshot_54C2BA91-46F1-4CE5-8D01-56B0B783DC15.png") loading
                     ZStack {

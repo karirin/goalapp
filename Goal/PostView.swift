@@ -91,6 +91,14 @@ class AppState: ObservableObject {
             self.isLoading = false
             return
         }
+        DispatchQueue.main.async {
+
+            let postsRef = Database.database().reference().child("posts")
+            postsRef.queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId).observeSingleEvent(of: .value) { snapshot in
+                self.hasPosts = snapshot.exists()
+                self.isLoading = false
+            }
+        }
 
         let postsRef = Database.database().reference().child("posts")
         postsRef.queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId).observeSingleEvent(of: .value) { snapshot in
