@@ -12,14 +12,14 @@ import GoogleMobileAds
 import StoreKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-//    @EnvironmentObject var appState: AppState
-    var appState: AppState?
+    @EnvironmentObject var appState: AppState
+//    var appState: AppState?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
         }
-        appState = AppState()
+//        appState = AppState()
         DispatchQueue.global(qos: .background).async {
             self.checkSubscription()
         }
@@ -31,7 +31,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             do {
                 let subscribed = try await self.isSubscribed()
                 DispatchQueue.main.async {
-                    self.appState!.isBannerVisible = !subscribed
+                    self.appState.isBannerVisible = !subscribed
                 }
             } catch {
                 print("サブスクリプションの確認中にエラー: \(error)")
@@ -103,8 +103,8 @@ struct GoalApp: App {
                             .frame(width: 100, height: 100)  // ローディングビューのサイズを設定します。
                             .position(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.2) // ローディングビューを画面の中央に配置します。
                     }
-                } else if appDelegate.appState!.hasPosts {
-                    if appDelegate.appState!.isBannerVisible {
+                } else if appState.hasPosts {
+                    if appState.isBannerVisible {
                         BannerView()
                             .frame(height: 60)
                     }
