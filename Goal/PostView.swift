@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import StoreKit
 
 struct Milestone {
     var goal: String
@@ -83,21 +84,21 @@ class AppState: ObservableObject {
     @Published var milestones: [Milestone] = [Milestone(goal: "", value: 0, unit: "")]
     @Published var hasPosts: Bool = false
     @Published var isLoading: Bool = true
-    // Add other states as needed
-    @Published var isBannerVisible = true // ここに移動
+    @Published var isBannerVisible = true
 
     init() {
         guard let currentUserId = Auth.auth().currentUser?.uid else {
             self.isLoading = false
             return
         }
+        
         DispatchQueue.main.async {
-
             let postsRef = Database.database().reference().child("posts")
             postsRef.queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId).observeSingleEvent(of: .value) { snapshot in
                 self.hasPosts = snapshot.exists()
                 self.isLoading = false
             }
+            self.checkSubscription()
         }
 
         let postsRef = Database.database().reference().child("posts")
@@ -107,6 +108,66 @@ class AppState: ObservableObject {
             // Loading finished, update isLoading to false
             self.isLoading = false
         }
+    }
+    
+    func checkSubscription() {
+        Task {
+            do {
+                let subscribed = try await self.isSubscribed()
+                DispatchQueue.main.async {
+                    self.isBannerVisible = !subscribed
+                }
+            } catch {
+                print("サブスクリプションの確認中にエラー: \(error)")
+            }
+        }
+    }
+
+    func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        switch result {
+        case let .unverified(_, verificationError):
+            throw verificationError
+        case let .verified(safe):
+            return safe
+        }
+    }
+
+    func getSubscriptionRenewalState(groupID: String) async throws -> [StoreKit.Product.SubscriptionInfo.RenewalState] {
+      var results: [StoreKit.Product.SubscriptionInfo.RenewalState] = []
+      
+      let statuses = try await Product.SubscriptionInfo.status(for: groupID)
+      for status in statuses {
+        guard case .verified(let renewalInfo) = status.renewalInfo,
+              case .verified(let transaction) = status.transaction
+        else {
+          continue
+        }
+        results.append(status.state)
+      }
+      return results
+    }
+      
+    func isSubscribed() async throws -> Bool {
+        var subscriptionGroupIds: [String] = []
+        for await result in Transaction.currentEntitlements {
+            let transaction = try self.checkVerified(result)
+            guard let groupId = transaction.subscriptionGroupID else { continue }
+            subscriptionGroupIds.append(groupId)
+        }
+
+        for groupId in subscriptionGroupIds {
+            let renewalStates = try await getSubscriptionRenewalState(groupID: groupId)
+            for state in renewalStates {
+                switch state {
+                case .subscribed, .inGracePeriod:
+                    return true
+                default:
+                    break
+                }
+            }
+        }
+        
+        return false // サブスクリプションがない、または有効でない場合に false を返す
     }
 }
 
