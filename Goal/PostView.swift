@@ -87,6 +87,7 @@ class AppState: ObservableObject {
     @Published var isBannerVisible = true
 
     init() {
+        print("test1")
         guard let currentUserId = Auth.auth().currentUser?.uid else {
             self.isLoading = false
             return
@@ -116,6 +117,8 @@ class AppState: ObservableObject {
                 let subscribed = try await self.isSubscribed()
                 DispatchQueue.main.async {
                     self.isBannerVisible = !subscribed
+                    print("self.isBannerVisible = !subscribed")
+                    print(self.isBannerVisible)
                 }
             } catch {
                 print("サブスクリプションの確認中にエラー: \(error)")
