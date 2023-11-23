@@ -46,10 +46,103 @@
             filePath = "Goal/PostView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
+            startingLineNumber = "388"
+            endingLineNumber = "388"
             landmarkName = "body"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F93E241F-905C-4C50-A412-2807CCF81985"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Goal/GoalApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "15"
+            endingLineNumber = "15"
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "F93E241F-905C-4C50-A412-2807CCF81985 - f67c12001bc585e1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Goal.AppDelegate.appState.getter : Swift.Optional&lt;Goal.AppState&gt;"
+                  moduleName = "Goal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryoya/Desktop/Goal/Goal/GoalApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "F93E241F-905C-4C50-A412-2807CCF81985 - 38da444949490fba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Goal.AppDelegate.appState.setter : Swift.Optional&lt;Goal.AppState&gt;"
+                  moduleName = "Goal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryoya/Desktop/Goal/Goal/GoalApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "F93E241F-905C-4C50-A412-2807CCF81985 - 686f9ff0982345d8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Goal.AppDelegate.appState.modify : Swift.Optional&lt;Goal.AppState&gt;"
+                  moduleName = "Goal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryoya/Desktop/Goal/Goal/GoalApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "F93E241F-905C-4C50-A412-2807CCF81985 - 2f2632548362e546"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Goal.AppDelegate.appState.modify : Swift.Optional&lt;Goal.AppState&gt; with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Goal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryoya/Desktop/Goal/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "F93E241F-905C-4C50-A412-2807CCF81985 - 48266103d079660d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Goal.AppDelegate.init() -&gt; Goal.AppDelegate"
+                  moduleName = "Goal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryoya/Desktop/Goal/Goal/GoalApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "48">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

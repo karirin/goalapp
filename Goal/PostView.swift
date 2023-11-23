@@ -117,6 +117,7 @@ class AppState: ObservableObject {
                 let subscribed = try await self.isSubscribed()
                 DispatchQueue.main.async {
                     self.isBannerVisible = !subscribed
+//                    self.isBannerVisible = !true
                     print("self.isBannerVisible = !subscribed")
                     print(self.isBannerVisible)
                 }
@@ -154,17 +155,22 @@ class AppState: ObservableObject {
         var subscriptionGroupIds: [String] = []
         for await result in Transaction.currentEntitlements {
             let transaction = try self.checkVerified(result)
+            print("transaction:\(transaction)")
             guard let groupId = transaction.subscriptionGroupID else { continue }
+            print("groupId:\(groupId)")
             subscriptionGroupIds.append(groupId)
         }
 
         for groupId in subscriptionGroupIds {
             let renewalStates = try await getSubscriptionRenewalState(groupID: groupId)
+            print("renewalStates:\(renewalStates)")
             for state in renewalStates {
                 switch state {
                 case .subscribed, .inGracePeriod:
+                    print("case subscribed inGracePeriod")
                     return true
                 default:
+                    print("default")
                     break
                 }
             }
