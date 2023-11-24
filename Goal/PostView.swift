@@ -97,7 +97,9 @@ class AppState: ObservableObject {
             let postsRef = Database.database().reference().child("posts")
             postsRef.queryOrdered(byChild: "userId").queryEqual(toValue: currentUserId).observeSingleEvent(of: .value) { snapshot in
                 self.hasPosts = snapshot.exists()
+                print("self.hasPosts:\(self.hasPosts)")
                 self.isLoading = false
+                print("self.isLoading:\(self.isLoading)")
             }
             self.checkSubscription()
         }
@@ -153,7 +155,9 @@ class AppState: ObservableObject {
       
     func isSubscribed() async throws -> Bool {
         var subscriptionGroupIds: [String] = []
+        print("isSubscribed_1")
         for await result in Transaction.currentEntitlements {
+            print("isSubscribed_2")
             let transaction = try self.checkVerified(result)
             print("transaction:\(transaction)")
             guard let groupId = transaction.subscriptionGroupID else { continue }

@@ -190,7 +190,7 @@ class GoalViewModel: ObservableObject {
                     self.intermediateGoals = []
 
                     if let intermediate_goals = postData["intermediate_goal"] as? [[String: AnyObject]] {
-                        print("intermediate_goals get:\(intermediate_goals)")
+//                        print("intermediate_goals get:\(intermediate_goals)")
                         for intermediate_goal in intermediate_goals {
                             if let goal = intermediate_goal["goal"] as? String,
                                let unit = intermediate_goal["unit"] as? String,
@@ -223,7 +223,7 @@ class GoalViewModel: ObservableObject {
                                 }
                             }
                         }
-                        print("intermediate_goals:\(intermediate_goals)")
+//                        print("intermediate_goals:\(intermediate_goals)")
                     } else {
                         print("Failed to parse intermediate_goal: \(postData["intermediate_goal"] ?? "nil")")
                     }
