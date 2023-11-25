@@ -156,6 +156,7 @@ class AppState: ObservableObject {
     func isSubscribed() async throws -> Bool {
         var subscriptionGroupIds: [String] = []
         print("isSubscribed_1")
+        print("Transaction.currentEntitlements:\(Transaction.currentEntitlements)")
         for await result in Transaction.currentEntitlements {
             print("isSubscribed_2")
             let transaction = try self.checkVerified(result)
