@@ -120,14 +120,6 @@ func updateSubscriptionStatus() async {
             validSubscription = transaction
         }
     }
-
-//    if let productId = validSubscription?.productID {
-//        // 特典を付与
-//        enablePrivilege(productId: productId)
-//    } else {
-//        // 特典を削除
-//        disablePrivilege()
-//    }
 }
 
 
@@ -188,17 +180,6 @@ func observeTransactionUpdates() {
                 continue
             }
 
-//            if transaction.revocationDate != nil {
-//                // 払い戻しされてるので特典削除
-//                disablePrivilege()
-//            } else if let expirationDate = transaction.expirationDate,
-//                      Date() < expirationDate // 有効期限内
-//                      && !transaction.isUpgraded // アップグレードされていない
-//            {
-//                // 有効なサブスクリプションなのでproductIdに対応した特典を有効にする
-//                enablePrivilege(productId: transaction.productID)
-//            }
-
             await transaction.finish()
         }
     }
@@ -221,6 +202,7 @@ struct SubscriptionView: View {
                     Button(action: {
                         Task {
                             do {
+                                try await AppStore.sync()
                                 try await viewModel.purchaseProduct(product)
                                 appState.isBannerVisible = false
                                 print("サブスクリプション登録 appState.isBannerVisible = false")
@@ -231,14 +213,6 @@ struct SubscriptionView: View {
                             }
                         }
                     }) {
-//                        VStack(alignment: .leading) {
-//                            Text(product.displayName)
-//                                .font(.headline)
-//                            Text(product.description)
-//                                .font(.subheadline)
-//                            Text(product.displayPrice)
-//                                .font(.subheadline)
-//                        }
                         Text("サブスクリプション登録")
                     }
                 }

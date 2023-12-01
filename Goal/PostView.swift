@@ -87,7 +87,6 @@ class AppState: ObservableObject {
     @Published var isBannerVisible = true
 
     init() {
-        print("test1")
         guard let currentUserId = Auth.auth().currentUser?.uid else {
             self.isLoading = false
             return
@@ -111,12 +110,47 @@ class AppState: ObservableObject {
             // Loading finished, update isLoading to false
             self.isLoading = false
         }
+        
+        Task {
+            print("test55")
+                    await checkCurrentSubscription()
+            print("test66")
+                }
+    }
+    // サブスクリプションの状態を確認する非同期メソッド
+     func checkCurrentSubscription() async {
+         print("test00")
+         print("Transaction.currentEntitlements:\(Transaction.currentEntitlements)")
+         for await result in Transaction.currentEntitlements {
+             switch result {
+             case .verified(let transaction):
+                 print("test11")
+                 // サブスクリプションが有効であれば、必要なプロパティを更新
+                 DispatchQueue.main.async {
+                     // UI関連の更新はメインスレッドで行う
+                     print("test22")
+                     self.updateSubscriptionState(transaction: transaction)
+                 }
+             case .unverified:
+                 // サブスクリプションが確認できない場合の処理
+                 print("test33")
+                 break
+             }
+         }
+     }
+    
+    // サブスクリプションの状態に基づいてAppStateを更新するメソッド
+    func updateSubscriptionState(transaction: StoreKit.Transaction) {
+        // ここにサブスクリプションの状態に基づいたロジックを実装
+        // 例: self.isBannerVisible = !transaction.isSubscribed
+        print("test44")
     }
     
     func checkSubscription() {
         Task {
             do {
                 let subscribed = try await self.isSubscribed()
+                print("subscribed:\(subscribed)")
                 DispatchQueue.main.async {
                     self.isBannerVisible = !subscribed
 //                    self.isBannerVisible = !true
@@ -140,7 +174,6 @@ class AppState: ObservableObject {
 
     func getSubscriptionRenewalState(groupID: String) async throws -> [StoreKit.Product.SubscriptionInfo.RenewalState] {
       var results: [StoreKit.Product.SubscriptionInfo.RenewalState] = []
-      
       let statuses = try await Product.SubscriptionInfo.status(for: groupID)
       for status in statuses {
         guard case .verified(let renewalInfo) = status.renewalInfo,
